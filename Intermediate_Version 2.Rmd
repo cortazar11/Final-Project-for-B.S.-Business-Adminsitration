@@ -1,0 +1,1284 @@
+---
+title: "**EN EL CONTEXTO DEL METODO PARAMETRICO COMPARATIVA DE DISTRIBUCIONES EN TERMINOS DE VALOR EN RIESGO - VaR (Value at Risk).**  \n(Version Intermedia2)"
+author: Miguel Martinez
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
+#- \usepackage{blindtext}
+#- \usepackage[T1]{fontenc}
+#- \usepackage[utf8]{inputenc}
+- \usepackage{sectsty}
+
+
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE}
+library(fGarch)
+library(kableExtra)
+library(tidyverse)
+library(grid)
+library(gridExtra)
+```
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section{INTRODUCCION}
+\end{centering}
+
+
+*\underline{FUNDAMENTOS DEL RIESGO}*
+
+Riesgo es definido en términos financieros como la posibilidad de que un resultado o las ganancias concretas de una inversión difieran del rendimiento esperado. El riesgo incluye la posibilidad de perder algo o todo de una inversión. El riesgo es usualmente cuantificado considerando comportamientos y resultados históricos.
+Todo el mundo está expuesto a algun tipo de riesgo todos los dias: conduciendo, andando en la calle, invirtiendo, planificando el capital, etc. La personalidad de un inversor, su estilo de vida, edad son algunos de los factores mas importantes a considerar a propósito de inversión individual y riesgo. Cada inversor tiene un perfil de riesgo único que determina su disposición y capacidad para soportar el riesgo. En general, a medida que el riesgo de una inversión sube, los inversores esperan mayores rendimientos para compensar el tomar esos riesgos.
+Una idea fundamental en finanzas es la relación entre riesgo y rendimiento. Cuanto mayor es el riesgo que un inversor esta en disposición de tomar, mayor el rendimiento potencial.
+Individuos, asesores financieros y compañías pueden desarrolar estrategias para la gestión del riesgo que ayuden a gestionar los riesgos asociados con sus inversiones y actividades de negocio.
+\
+
+\
+*\underline{GESTION DEL RIESGO}*
+
+En el mundo financiero, gestión del riesgo es el proceso de identificación, análisis y aceptación o reducción de la incertidumbre en las decisiones de inversión. Fundamentalmente, la gestión del riesgo ocurre cuando un inversor analiza e intenta cuantificar las pérdidas potenciales de una inversión y toma la decisión apropiada dados los objetivos de la inversión y su tolerancia al riesgo.
+
+El riesgo es inseparable del rendimiento. Toda inversión envuelve algun grado de riesgo.Los brokers financieros usan instrumentos financieros como opciones y futuros, los gestores usan estrategias de diversificación y asignación de activos para mitigar o gestionar efectivamente el riesgo.
+
+Una gestión inadecuada del riesgo puede resultar en graves consecuencias para las compañías, individuos y la economía en general. Por ejemplo, el colapso de las hipotecas de alto riesgo ("subprime mortgage") en 2007 provocó la gran recesión que fue derivada de malas decisiones en la gestion del riesgo, como fueron las de prestamistas que extendieron las hipotecas a individuos con un crédito muy pobre, compañías de inversión que compraron, empaquetaron y revendieron esas hipotecas y fondos que inviertieron excesivamente en activos respaldados por aquellas hipotecas.
+
+En el mundo de la inversión, el riesgo es necesario e inseparable del rendimiento que se desea. Una definición comun del riesgo es la desviación del resultado esperado. Podemos expresar esta desviación en términos absolutos o relativos a alguna otra cosa, como la referencia al mercado. Esta desviación puede ser positiva o negativa. Para conseguir rendimientos elevados uno se predispone a aceptar un mayor riesgo. El incremento del riesgo viene en forma de incremento de la volatilidad.
+
+La volatilidad que un inversor debe aceptar depende por completo de su tolerancia al riesgo. Una de las medidas de riesgo mas usadas es la desviación típica, una medida estadística de dispersión alrededor de medidas de tendencia central. Se halla el rendimiento medio de una inversión y luego se halla la desviación típica sobre el mismo periodo. Las distribuciones normales señalan que el rendimiento esperado de la inversión es probable que sea una desviación típica de la media el 67% del tiempo, dos desviaciones típicas el 95% del tiempo y tres desviaciones típicas el 99.7% del tiempo. Esto ayuda a los inversores a evaluar el riesgo numericamente.
+
+Muchas veces lo que los inversores realmente quieren saber es no solo cuanto un activo se desvía del resultado esperado, sino como de mal las cosas aparecen en la cola de la izquierda de la distribución normal.
+El Valor en Riesgo intenta proveer una respuesta a esta cuestión. La idea detras de VaR es cuantificar como de grande la pérdida en una inversión podría ser, dado un nivel de confianza en un periodo de tiempo. Por ejemplo: "Con un nivel de confianza del 95% , el máximo de pérdida en una inversión de 1000 € en un periodo de dos años es de 200 €".
+\
+
+\
+*\underline{TIPOS DE RIESGO}*
+
+* __Riesgo de Mercado__
+
+|       Entendiendo el riesgo de mercado.
+
+Riesgo de mercado es la posibilidad de que un individuo o entidad experimente pérdidas debido a factores que   afectan globalmente al desempeño de una cartera de activos en los mercados financieros.
+
+El riesgo de mercado, tambien llamado riesgo sistemático, no puede ser eliminado a través de la    diversificación, aunque se puede cubrir de otras maneras. Fuentes del riesgo de mercado incluyen: recesiones,  tormenta política, cambios en los tipos de interés, desastres naturales, etc.
+
+Este riesgo puede ser contrastado con el riesgo no sistemático, que es único a una compañía or sector. Este último es conocido tambien como riesgo específico o riesgo residual en el contexto de una cartera de activos, y que puede ser reducido a través de la diversificación.
+
+El riesgo de mercado existe porque los precios cambian. La desviación típica de los cambios en los precios de los "stocks", monedas y mercancías se refiere como volatilidad. En contraste con el riesgo de mercado, el riesgo no sistemático esta ligado al rendimiento de un activo particular y se puede proteger a través de la diversificación.
+
+Los tipos mas comunes de riesgo de mercado son:
+
+1. Riesgo del tipo de interés: cubre la volatilidad que puede acompañar las fluctuaciones del tipo de interés debido a factores fundamentales como los anuncios de los bancos centrales relacionados con cambios en política monetaria.
+2. Riesgo de capital: riesgo que envuelven los cambios de precios de las carteras de activos.
+3. Riesgo de las mercancías: cubre los cambios de precios de mercancías, como el petróleo, maíz.
+4. Riesgo del tipo de cambio: proviene en el cambio de precio de una divisa en relación con otra.
+
+Los inversores pueden utilizar estrategias de cobertura para protegerse contra la volatilidad y el riesgo de mercado. Enfocando activos específicos, los inversores pueden contratar opciones para protegerse de  movimientos a la baja.
+
+|       Midiendo el riesgo de mercado
+
+Para medir el riesgo de mercado, inversores y analistas usan el método Valor en Riesgo ("Value at Risk").
+El modelo VaR es un método estadístico de gestion de riesgo que cuantifica la pérdida potencial de un activo o cartera de activos, asi como la probabilidad de que esa pérdida potencial ocurra. Este método asume que el contenido de la cartera de activos no cambia en un periodo específico.
+
+
+* __Riesgo de Credito__
+
+El riesgo de crédito es la posibilidad de pérdidas resultante de que un prestatario no devuelva un préstamo o cumpla con las obligaciones contractuales. Tradicionalmente se refiere al riesgo de que un prestamista pueda no recibir el principal y los intereses, resultando en una interrupción de los flujos de caja e incremento de los costes para su cobro.
+
+Aunque es imposible saber quien incumplirá sus obligaciones, un correcto asesoramiento y gestion del riesgo de crédito puede disminuir la severidad de las pérdidas. El pago de intereses del deudor es un premio al prestamista por asumir el riesgo de credito.
+
+El riesgo de crédito es calculado en base a la habilidad del prestatario en pagar un préstamo de acuerdo a sus términos iniciales. Para asesorar el riesgo de crédito de un préstamo al consumo, los prestamistas miran: historia de us crédito, capacidad para pagarlo, capital, condiciones del préstamo.
+
+* __Riesgo de Liquidez__
+
+Liquidez es la habilidad de una compañía o un individuo de pagar sus deudas sin sufrir pérdidas catatróficas. En cambio, el riesgo de liquidez deriva de la falta de comerciabilidad de una inversión que no puede ser comprada o vendida lo suficientemente rápido para prevenir o minimizar las pérdidas. Tipicamente se refleja en grandes diferenciales de oferta y demanda.
+
+Cuanto mas pequeño es el tamaño del activo, mayor es el riesgo de liquidez. La caida en el valor de los activos motivó que muchos inversores vendieran sus carteras a cualquier precio durante la crisis de crédito global de 2007-2008. Esta prisa para salir de las posiciones provocó un aumento de los diferenciales de oferta y demanda y mayores caidas de los precios, que contribuyó a la iliquidez del mercado.
+
+El riesgo de liquidez ocurre cuando un individuo, negocio o intitución financiera no puede cumplir sus obligaciones a corto plazo. El inversor podría ser incapaz de convertir un activo en dinero sin perder capital o ingresos debido a una falta de compradores o a un mercado ineficiente.
+Las instituciones financieras dependen en gran medida de dinero prestado. Por ello son sometidos a un escrutinio para determinar si pueden cumplir sus obligaciones deudoras sin grandes pérdidas.Las instituciones encaran un estricto cumplimiento de los requerimientos y tests de 'stress' para medir su estabilidad financiera.
+
+Inversores, managers y prestamistas usan ratios para medir la liquidez cuando deciden el nivel de riesgo de la organización. Frecuentemente comparan los pasivos a corto plazo con los activos líquidos relacionados en las declaraciones financieras.
+
+* __Riesgo Operacional__
+
+El riesgo operacional resume las incertidumbres y peligros que una compañía encara cuando intenta su negocio diario dentro de un sector determinado. Un tipo de riesgo de negocio puede resultar de las rupturas de procedimientos internos , tanto de los empleados y sistemas, en oposición a problemas en que incurren fuerzas externas, como son sucesos económicos y políticos, conocido como riesgo sistemático.
+
+El riesgo operacional puede ser clasificado como una variedad de riesgo no sistemático, único a una compañía o a un sector.
+
+Estos riesgos son asociados frecuentemente con decisiones activas sobre como la organización funciona y qué prioriza.
+
+Porque refleja procedimientos humanos y de pensamiento, el riesgo operacional se puede resumir en riesgo humano. Cambia entre los diferentes sectores y tiene una gran importancia en relación a potenciales decisiones de inversión. Sectores con baja interacción humana probablemente tengan un menor riesgo operacional.
+
+* __Riesgo de negocio__
+
+El riesgo de negocio es la exposición de una compañia a factores que disminuirán sus beneficios o la dirigirán al fracaso. Cualquier cosa que amenace la habilidad de una compañía para conseguir sus objetivos financieros se peude considerar un riesgo de negocio.
+
+Hay muchos factores que pueden converger a la aparición del riesgo de negocio, como el liderazgo de la compañía.
+
+Sin embargo muchas veces la causa de este riesgo es externa a la compañía.
+El riesgo de negocio es influenciado por un número de diferentes factores que incluyen:
+
+* Preferencias de los consumidores, demanda y volumen de ventas.
+* Precios unitarios y costes de los inputs.
+* Competencia
+* Clima económico general.
+* Regulaciones del gobierno.
+
+Para calcular este riesgo, los analistas usan cuatro ratios simples: margen de contribución, efecto apalancamiento operacional, efecto apalancamiento financiero, apalancamiento total. Para calculos mas complejos los analistas incorporan métodos estadísticos mas complejos. El riesgo de negocio ocurre en una de estas cuatro maneras: riesgo estratégico, riesgo de cumplimiento, riesgo operacional, riesgo de la reputación.
+\
+
+\
+*\underline{VALOR EN RIESGO ("Value at Risk")}*
+
+
+Tradicionalmente el riesgo de mercado de una institución se ha medido a través de la varianza. Sin embargo actualmente se utiliza el VaR. El VaR se puede definir como el valor máximo probable de pérdida, con un intervalo de confianza determinado, y sobre un cierto periodo de tiempo.
+
+Esta medida fue propuesta inicialmente por J.P. Morgan en 1994, siendo utilizado por importantes bancos en el manejo de derivados. Desde que el comité de Basilea de supervisión Bancaria del Banco de Pagos Internacionales requiere a las instituciones financieras cumplir con los requerimientos de capital en base a las estimaciones del Valor en Riesgo (VaR), esta medida se ha convertido en una herramienta básica del riesgo de mercado.
+
+El VaR de una cartera nos dice cual es la cantidad máxima que puede perder un inversor en un horizonte de tiempo dado y con una determinada probabilidad bajo condiciones normales de mercado.
+Formalmente, el VaR de una cartera con un nivel de confianza $(1−α)$ es el percentil $α$ $(q_{α})$ de la distribución de probabilidad de los cambios en el valor de la cartera.
+\begin{center}
+$Pr(ΔV ≤ VaR(α ))=α$
+\end{center}
+
+donde $ΔV$ representa los cambios en el valor de la cartera.
+
+Supongamos que la previsión VaR de un banco en el horizonte de un dia es 5 millones € ($(q_{α})=5 mill$) con un nivel de confianza del 95% ($(1−α)=95\%$). Esto qiere decir que con una probabilidad del 95%, las pérdidas del banco no superarán los 5 millones €. Existen todavía un 5% de probabilidades de que esas pérdidas sean superiores a esos 5 millones.
+
+De esta manera, para obtener el VaR de una cartera lo que tenemos que hacer es estimar la distribución de probabilidad de los rendimientos o de sus innovaciones (diferencia de los rendimientos y su media incondicional). Para estimar esas distribuciones se han propuesto distintas metodologías
+
+* Simulación Histórica (método no paramétrico)
+* Método Paramétrico
+* Métodos Semi-Paramétricos.
+    + Simulación histórica filtrada.
+    + Teoría de los valores extremos.
+    + Método CaViar.
+    
+  
+*Simulación Histórica*
+
+El método de simulación histórica es el mas popular dentro de los métodos no-paramétricos. Este método utiliza la distribución empírica de los rendimientos como una estimación de la distribución de probabilidad de los rendimientos (que no es conocida). Así bajo este método, el VaR de una cartera a un nivel de confianza $(1−α )$ será el percentil $α$ de la distribución empírica de los rendimientos.
+$VaR ( α )=q_{α}$
+Donde $q_{α}$ denota el percentil $α$ de la distribución empírica de los rendimientos.
+
+
+*Método Paramétrico*
+
+La apromación paramétrica estima el riesgo al fijar una curva de probabilidad a los datos y luego infiere el VaR de la curva fijada. Generalmente se asume que los rendimientos de una cartera siguen una distribución Normal. Aunque en este trabajo consideraremos otras distribuciones que pueden replican mejor las características observadas en los rendimientos financieros, como asimetría y curtosis.
+
+Bajo este supuesto, el VaR de una cartera a un nivel de confianza $(1−α )$ se calcula como:
+$VaR_{t}( α )=μ_{t} +σ_{t} q_{α}$
+donde $μ_{t}$ representa la esperanza condicional de los rendimientos, $σ_{t}$ representa la desviación estándar de los rendimientos de la cartera y $q_{α}$ representa el percentil $α$ de la distribución normal estándar
+
+*Métodos Semi-Paramétricos*
+
+* Simulación Histórica Filtrada.
+
+Este método combina las ventajas del método de Simulación Histórica con la flexibilidad de los modelos de varianza condicional. En primer lugar, se calcula la varianza condicional de los rendimientos financieros. En segundo lugar se estandarizan los rendimientos. Los rendimientos estandarizados son variables independientes e identicamente distribuidas. Por último se extraen N observaciones aleatorias de la muestra de rendimientos estandarizados.
+
+* Teoría de los valores extremos.
+
+Este método se centra en la distribución límite de los rendimientos extremos de una determinada muestra, la cual es independiente de la distribución de los rendimientos en si mismos. Los dos principales modelos basados en la teoría de valores extremos son:
+
+1. El modelo de bloque máximo (Block Maxima Model, BM)
+2. Picos sobre un umbral (Peaks over threshold model POT)
+
+En el marco del modelo POT hay dos tipos de análisis:
+
+1. Modelo semiparamétrico construido alrededor del estimador Hill.
+2. Modelo paramétrico completo basado en la distribución Pareto Generalizada.
+
+Entre todos estos métodos de estimar el VaR, el método paramétrico es uno de los mas utilizados por las empresas y en el que se centrará este trabajo.
+
+Estimar el VaR de una cartera bajo el método paramétrico requiere asumir una distribución concreta para los rendimientos, generalmente se asume una distribución normal. En este trabajo, evaluamos la precisión del método paramétrico bajo distintas distribuciones de probabilidad incluida la normal. El objetivo es estudiar cuál de ellas ofrece estimaciones mas precisas del VaR. Para este estudio he utilizado datos del índice IBEX35, principal índice bursátil de referencia de la bolsa española, en el periodo que comprende del año 2000 al 2019.
+
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section*{METODOLOGIA}
+\end{centering}
+
+*\underline{QUE ES EL VaR Y COMO CALCULARLO CON EL METODO PARAMETRICO}*
+
+Asi pues definimos el VaR como la peor pérdida esperada en un horizonte de tiempo bajo condiciones normales de mercado y a un nivel de confianza dado.
+
+VaR por tanto es el quantil condicional de la distribución de rendimientos de un activo.
+
+El VaR, con una probabilidad dada $α\in(0, 1)$, que se denota como $VaR(α )$, es definido como el $α$ quantil de la distribución de probabilidad de los rendimientos.
+\begin{center}
+$F(VaR(α))=Pr(r_{t} < VaR(α))=α$
+\end{center}
+
+En el marco de las técnicas paramétricas, el VaR puede ser calculado como $VaR_{t}=\mu_{t}+\hatσ_{t}k_{α}$, donde $\mu_{t}$ representa la media condicional, $\hatσ_{t}$ es la desviación típica condicional y $k_{α}$ representa el quantil correspondiente de la distribución de rendimientos estandarizados a un nivel de confianza $(1-α)$.
+
+Finalmente, y una vez calculada la varianza, estimamos las distribuciones de los rendimientos estandarizados bajo cada una de las funciones de distribución consideradas.
+
+* Distribución normal.
+* Distribución t-student.
+* Distribución de Error Generalizada.
+* Distribución de Error Generalizada Asimétrica.
+
+Las funciones de densidad de las distribuciones con las que trabajaremos son las siguientes:
+
+\begingroup
+\fontfamily{phv}\fontsize{10}{12}\selectfont
+\center \textcolor{orange}{FUNCIONES DENSIDAD DISTRIBUCIONES} \center
+\endgroup
+
+
+```{r echo=FALSE}
+par(mfrow=c(2,2))
+x<-rnorm(1000)
+curve(dnorm(x,mean(x),sd(x)), col = "orange", from=-5, to=5,xlab = "quantile", ylab = "densidad",main="Distribucion normal")
+x<-rt(40,39)
+curve(dt(x, 39), from = -5, to = 5, col = "orange", xlab = "quantile", ylab = "densidad", lwd = 2, main="Distribución t-student")
+x<-rged(n=1000)
+modelo_ged<-gedFit(x)
+curve(dged(x,mean=modelo_ged$par[1],sd=modelo_ged$par[2],nu=modelo_ged$par[3]), col = "orange", from=-5,to=5,xlab = "quantile", ylab = "densidad", main="Distribución error generalizada")
+x<-rsged(n=1000)
+modelo_sged<-sgedFit(x)
+curve(dsged(x,mean=modelo_sged$par[1],sd=modelo_sged$par[2],nu=modelo_sged$par[3]), col = "orange", from=-5, to=5, xlab = "quantile", ylab = "densidad",main="Distribución error generalizada \nasimétrica")
+```
+\
+
+\
+*Distribución Normal*
+
+La gráfica de su función de densidad tiene una forma acampanada y es simétrica respecto de un determinado parámetro estadístico. Esta curva se conoce como campana de Gauss y es el gráfico de una función gaussiana. Es una de las distribuciones de probabilidad de variable continua que con mas frecuencia aparece en estadística y en teoría de las probabilidades.
+
+*Distribución T-Student*
+
+Es una distribución que surge del problema de estimar la media de una población normalmente distribuida cuando el tamaño de la muestra es pequeño y la desviación estándar poblacional es desconocida. Fue desarrollada por William Sealy Gosset bajo el pseudónimo "Student".
+
+*Distribución Error Generalizada*
+
+Las distribuciones de error generalizado es una familia simétrica de distribuciones usadas en modelos matemáticos. Se usan habitualmente cuando los errores (diferencia entre los valores esperados y los valores observados) no estan normalmente distribuidos. Las distribuciones de error generalizado son útiles cuando los errores alrededor de la media o en las colas son de un interés especial. Este último caso es el del Valor en Riesgo.
+
+*Distribución Error Generalizada Asimétrica*
+
+Es un tipo de distribución de error generalizado con presencia de asimetría y curtosis en los datos. Esta comprobada su habilidad para modelar distribuciones empíricas de varias series financieras populares.
+\
+
+\
+
+*\underline{MODELO DE VOLATILIDAD}*
+
+Obtener una medida adecuada de la varianza o la volatilidad de los rendimientos financieros es una tarea esencial en finanzas.
+
+El agrupamiento en volatilidad es una de las características mas comunmente observadas en el comportamiento de los rendimientos financieros, y refleja el hecho de que variaciones grandes de cualquier signo tienden a ser seguidas por variaciones grandes, mientras que variaciones pequeñas de cualquier signo tienden a ser seguidas por variaciones pequeñas. Esta característica, pone de manifiesto que la varianza condicional de los rendimientos no es constante en el tiempo y, además, sugiere que mantiene una relación de dependencia temporal susceptible de ser modelizada.
+
+El conjunto de medidas de volatilidad puede dividirse en dos grandes bloques:
+
+* Medidas simples: no parten de un proceso generador de datos; las predicciones se hacen sin hacer implícito un   modelo para la evolución de los rendimientos. 
+* Medidas estructuradas: parten de un proceso generador de datos para los rendimientos y su varianza.
+
+Volatilidad es la desviación estandar instantánea de un activo y es la medida mas común del riesgo. Es la raiz cuadrada de la varianza. Podemos medir la varianza historicamente o implicitamente. En la aproximación histórica medimos la historia con la esperanza de que es predictiva. En la implícita se espera que el mercado conoce mejor y que el precio de mercado contiene, aunque sea implicítamente, una estimación de consenso de la volatilidad. Cuando medimos historicamente, el método mas fácil es la varianza simple. La debilidad de este método es que todos los rendimientos tienen el mismo peso. EWMA, una de las medidas simples,  mejora la varianza simple asignando peso a los diferentes rendimientos. De esta manera podemos usar una muestra grande y al mismo tiempo dar mas peso a los rendimientos mas actuales.
+
+EWMA es la medida que utilizaremos para estimar la volatilidad. El uso de esta medida esta muy extendido, sobre todo entre los operadores del mercado. Consiste en una media móvil ponderada que se calcula como:
+
+$$
+\sigma_{t}^2=\lambda\sigma^2+(1-\lambda)r_{t-1}
+$$
+
+
+Esta medida ha sido popularizada por J.P.Morgan como mecanismo sencillo de predicción de la volatilidad. Asi mismo han sugerido utilizar un valor $λ$ de 0.94 para el parámetro y un valor de la ventána móvil de 74 dias.
+\
+
+\
+*\underline{BACKTESTING}*
+
+El proceso de evaluación utilizado para comprobar la idoneidad de las medidas VaR es lo que se conoce como backtesting. Este concepto hace referencia al conjunto de técnicas estadísticas que permiten verificar la bondad de las estimaciones obtenidas, y además permite elegir el modelo óptimo entre diferentes estimaciones obtenidas. Por ello el backtesting es una herramienta clave a la hora de gestionar el riesgo financiero. En Basilea III (2010), el Comité de Supervisión Bancaria de Basilea señaló la necesidad de verificar la precisión del modelo mediante pruebas retrospectivas frecuentes.
+
+En general, los procedimientos de backtesting se pueden clasificar en dos grandes bloques: backtesting basados en tests estadísticos de precisión y backtesting basados en lo que se conoce como función de pérdida.
+
+Todos los tests desarrollados para comprobar la precisión de las medidas VaR se basan en el concepto de violación o excepción. Si denotamos por $r_{t}$ a los rendimientos financieros y por $VaR(α)$ la estimación VaR obtenida dado un nivel de confianza $1-α$, se dice que tenemos una excepción cuando los rendimientos financieros caen por debajo de la estimación VaR ($r_{t}<VaR(α)$).
+
+La forma más sencilla de evaluar cuan buenas son las estimaciones VaR consiste en comparar el porcentaje de excepciones obtenido con el porcentaje esperado. Si el porcentaje de excepciones es menor que el esperado, el modelo utilizado para obtener las estimaciones VaR sobreestima el riesgo de mercado; por el contrario, si el porcentaje de excepciones fuera mayor que el esperado, el model VaR estaría infraestimando el riesgo de mercado.
+
+1. __Backtesting basados en tests de precisión__
+
+Lo óptimo es contrastar si estadísticamente el número y porcentaje de excepciones es igual al teórico. Para ello hay que utilizar un test de hipótesis.
+
+Un test de hipótesis es una regla que permite decidir cuál de las hipótesis planteadas en el estudio es la mas acertada. Para ello, lo primero que hay que hacer es plantear la hipótesis nula ($H_{o}$) sobre el valor del parámetro; en este caso el porcentaje de excepciones. Con los datos muestrales se construye el estadístico de contraste t. Obtenido este estadístico, conocida su distribución estadística y fijado el nivel de confianza, podemos realizar el test.
+
+La primera alternativa para realizar el test es comparar el estadístico obtenido de los datos con lo que se conoce como valor crítico. Este valor crítico se obtiene a partir de la tabla de la distribución del estadístico. Es decir, si el estadístico sigue una distribución normal y estamos realizando un test de hipótesis a un nivel de confianza del 95% , el valor crítico que aparece en la tabla de la distribución normal estandarizada es 1.65.
+
+El paso siguiente es comparar nuestro estadístico t con el valor crítico. Así si t > VC, se rechaza la hipótesis nula, mientras que si t < VC se acepta esa hipótesis.
+
+Kupiec introduce un test en términos de ratio de verosimilitud. La prueba de razón de verosimilitud es una prueba estadística que se basa en la comparación a través de un cociente de la función de verosimilitud evaluada para la hipótesis nula y la alternativa. La decisión de rechazar o no la hipótesis nula se basa en el valor de este cociente
+
+El test de Kupiec asume que una medida precisa del $VaR(α)$ debería producir un porcentaje de excepciones igual al esperado, es decir, la hipótesis nula. El estadístico de la razon de verosimilitud es:
+\begin{center}
+$LRuc=2*log\frac{(\hat{α}^{x}( 1− α )^{N− x})}{(\hat{α}^{x}( 1−α )^{N− x} )}$
+\end{center}
+
+2. __Backtesting basados en la función de pérdida__
+
+El test descrito en la sección anterior nos permiten evaluar la precisión de las estimaciones VaR. Sin embargo, cuando utilizamos modelos alternativos para obtener estimaciones VaR, estos tests solo nos permiten evaluar si dichas estimaciones son precisas o no, pero no podemos saber que modelo genera las mejores estimaciones del VaR.
+
+La función de pérdida permite clasificar a distintos modelos alternativos, y así el modelo que miniminize la pérdida total será preferido a otros.
+
+El backtesting basado en la función de pérdida analiza la magnitud del fallo cuando ocurre una excepción. Esta función de pérdida examina la distancia entre los rendimientos observados y la previsión del VaR en los casos en que se ha obtenido una excepción. Esta diferencia representa la pérdida no cubierta.
+
+López propone una fórmula general para la función de pérdida, que en su especificación cuadrática sería:
+
+\begin{center}
+$LF=1+(r_{t}-VaR(α))^2 $ si $r_{t}<VaR(α)$ ; 0 si $r_{t}>VaR(α)$
+\end{center}
+
+El término cuadrático asegura que las excepciones grandes sean penalizadas mas que las excepciones pequeñas.
+
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section*{DATOS}
+\end{centering}
+
+Para la realización de este trabajo he utilizado datos diarios del IBEX35 en el periodo muestral que se extiende desde el año 2000 hasta el año 2019. El IBEX35 es el principal índice español y es un índice ponderado por capitalización bursátil. Actualmente son 35 las empresas que forman parte del IBEX, un listado que se actualiza cada seis meses.
+
+Para calcular los rendimientos se ha utilizado la siguiente expresión:
+\
+
+\
+\begin{center}
+$Rendimiento=\frac{(Indice_{t+1}-Indice_{t})}{Indice_{t}}$
+\end{center}
+
+
+
+```{r echo=FALSE, message=FALSE}
+load("/home/miguel/UNED_2021/Proyecto/R Language/.RData")
+library(tidyverse)
+library(moments)
+library(kableExtra)
+```
+\
+
+
+\
+*GRAFICOS*
+\
+
+\
+La evolución del IBEX35 se presenta en el gráfico 1. En el gráfico 2 presentamos la evolución de los rendimientos. En la tabla adjunta se presentan los estadísticos descriptivos de los rendimientos.
+
+```{r echo=FALSE, message=FALSE}
+g<-ggplot(ibex2,aes(Order,Indice))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family = "Times")+theme(axis.text.x =     element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),axis.title.y = element_text(color="orange"))+
+  labs(x="Año",title="GRAFICO 1 - IBEX 35")
+```
+\
+
+\
+
+En este gráfico podemos ver las oscilaciones del IBEX35 a lo largo de 20 años; desde el 2000 hasta 2019.
+
+En primer lugar hay una caida sostenida desde el 2000 hasta finales 2002-inicios de 2003. Periodo que corresponde a la introduccion del euro como moneda oficial en sustitución de la peseta, que dejó de circular en 2002. En este periodo, aunque la mayoria de indicadores económicos no fueron malos (Producto Interior Bruto, Tasa de desempleo, Deuda Pública), las tasas de inflacion fueron elevadas, situandose en niveles de 1995 (2000: 4%, 2001: 2.7%, 2002: 4%).
+
+Luego se ve la caída que comienza en 2007 con la crisis financiera internacional y se prolonga hasta principios 2009, donde comienza a recuperarse el índice hasta principios de 2010, donde comienzan unos dientes de sierra, hasta que en 2012 España solicite un rescate bancario de hasta cien mil millones de euros. Es en este punto donde el índice se volvería a derrumbar a un nivel aun mayor que cuando comenzó la crisis
+
+A partir de esta fecha la recuperación sería muy lenta, alcanzando otro máximo a mediados 2005. Es en 2004-2005 cuando le economía española comenzaría una lenta recuperación. Sin embargo el índice ha continuado con fuertes oscilaciones: en 2016 cayó, en 2017 subió comenzando a caer otra vez hasta 2019 dónde tuvo una ligera subida. Probablemente esto sea debido a lo poco representativo que es éste índice de la economía española en general y se mueva atendiendo a otros criterios: politica monetaria Banco Central Europeo, economía Estados Unidos, etc.
+\
+
+\
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+g<-ggplot(ibex2,aes(Order,Yield))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+theme(plot.margin=unit(c(1,1,1,1),"cm"))+theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),axis.title.y = element_text(color="orange"))+labs(x="Año",title="GRAFICO 2 - Rendimientos del IBEX35")
+```
+\
+
+\
+En éste gráfico podemos ver las oscilaciones en los rendimientos IBEX35.
+
+Entre el 2000 y 2003 los rendimientos oscilan entre 5% y -5%, periodo que corresponde a la incertidumbre que trajo la introducción del euro. Esta oscilación se reduce sustancialmente hasta 2007, periodo en el que el euro está ya asentado y hay un fuerte crecimiento económico.
+
+Es en 2007, con la crisis financiera internacional, cuando las oscilaciones aumentan otra vez con evidentes "outliers": en 2008 habrá subidas del 10% y bajadas de hasta el -10%, señal de la enorme incertidumbre exitente. A partir de esta fecha las oscilaciones serán entre el 5% y el -5% hasta 2014, año de comienzo de la recuperación,  cuando la oscilación se reduce a la mitad. A partir de aquí la oscilación vuelve a aumentar ligeramente hasta 2016 y reducirse de nuevo en 2018 manteniéndose estable hasta 2019. En este último periodo que comienza en 2014, es de notar la existencia de importantes outliers, llegando a uno en 2016 con un rendimiento del -13%. Esto es señal del movimiento hasta cierto punto arbitrario del índice en este último periodo, o sensible a otros motivos diferentes a lo que son las variables de la economía española.
+\
+
+
+\
+*ESTADISTICOS DESCRIPTIVOS*
+\
+
+
+\
+
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,7,1))
+for(i in 1:7){
+  df[1,1]<-round(mean(ibex2$Yield,na.rm=TRUE))
+  df[2,1]<-round(median(ibex2$Yield,na.rm=TRUE))
+  df[3,1]<-round(max(ibex2$Yield,na.rm=TRUE))
+  df[4,1]<-round(min(ibex2$Yield,na.rm=TRUE))
+  df[5,1]<-round(sd(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[6,1]<-round(skewness(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[7,1]<-round(kurtosis(ibex2$Yield,na.rm=TRUE),digits=2)
+}
+
+names(df)<- "Estadísticos descriptivos 
+             rendimientos IBEX35"
+rownames(df)<-c("Media","Mediana","Máximo","Mínimo","Desviación Tipica (Standard Deviation)","Coeficiente Asimetría (Skewness)","Coeficiente Curtosis (Kurtosis)")
+df %>%
+  kbl(booktabs=T) %>%
+  column_spec(2,width="20em") %>%
+  kable_styling(latex_options="scale_down", position = "left")%>%
+  footnote(general="Estadísticos descriptivos de los rendimientos del IBEX35 entre el 2000 y el 2019")
+```
+\
+
+\
+Como nos indica la media y la mediana igual a cero, en 20 años (desde el año 2000 al año 2019) no ha habido ningun avance en los rendimientos de este índice, permaneciendo en los mismos niveles que en 2000. En contraposicion el S&P 500, índice de de la bolsa de Nueva York, registró un rendimiento medio del 8.87% en el mismo periodo de tiempo. No es facil dar una explicación al pobre comportamiento del IBEX35 en los últimos 20 años. La primera causa es su composición, donde banca ha tenido y continúa ostentando un enorme peso en relación a otros índices. Los problemas vividos por el sector tras la caída de Lehman Brothers, la crisis de deuda, el rescate a la banca y en los últimos años las dificultades para obtener ingresos en un entorno de tipos cero explican en gran medida esta pobre evolución.
+
+La desviación típica de 1.45 nos indica que la dispersión de los datos alrededor de la media es bastante grande, con lo que el IBEX35 no habría seguido en estos 20 años la misma pauta. Asi podemos observar las diferentes crisis que han tenido lugar en estos años, seguidos por auges de la economía, para a continuación volver con una nueva crisis (burbuja puntocom, burbuja inmobiliaria,...)
+
+En cuanto al coeficiente de asimetría cercano a cero (-0.08) nos indica que la distribución de los datos no es sustancialmente asimétrica, sin embargo el coeficiente de curtosis nos da un valor excesivamente alto (9.12), o sea, la distribución es muy puntiaguada, lo que en términos financieros nos indica que el riesgo global de una inversión está sujeto a unas pocas sorpresas extremas en las colas de la distribución.
+\
+
+\
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section*{RESULTADOS EMPIRICOS}
+\end{centering}
+
+
+
+```{r echo=FALSE}
+data<-read.csv('/home/miguel/UNED_2021/Proyecto/IBEX35/VAR/student-t/VaR_tstudent.csv')
+data<-data[-1,]
+```
+En los siguientes gráficos se presentan las estimaciones VaR al 5% y 1% de coeficiente de riesgo obtenidas para cada una de las distribuciones utilizadas.
+
+
+Primero usamos como medida de la volatilidad de los rendimientos financieros, la medida EWMA ("exponential weigh moving average model") explicada en la sección de metodología:
+
+$$
+\sigma_{t}^2=\lambda\sigma^2+(1-\lambda)r_{t-1}^2
+$$
+
+Seguidamente, calculamos el Valor en Riesgo para las diferentes distribuciones segun el método paramétrico:
+
+$$
+VaR_{t}(\alpha)=\mu_{t}+\sigma_{t}q_{\alpha}
+$$
+
+donde  $μ_{t}$ representa la esperanza condicional de los rendimientos, $σ_{t}$ representa la desviación estándar condicional de los rendimientos de la cartera y $q_{α}$ representa el percentil $α$. Asi pues los percentiles a la izquierda de los cuales se sitúa el VaR tendrán diferentes valores segun las diferentes distribuciones y los diferentes coeficientes de riesgo en cada una de éstas.
+
+A continuación presentamos primero el resultado del cálculo de los percentiles para cada distribución y a continuación el VaR para cada distribución tambien.
+\
+
+\
+
+### *Modelo distribucion normal*
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<- -1.65
+  df[2,1]<- -2.33
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+```{r fig.width=13,echo=FALSE}
+normal95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+normal99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico 1 - VaR segun distribución normal",gp=gpar(fontsize=20,col="red"))
+  )
+```
+
+### *Modelo distribucion t-student*
+
+
+
+```{r echo=FALSE} 
+modelo_std<-stdFit(data$yield)
+Fobjetivo_std<-modelo_std$objective
+parametros<-modelo_std$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_std<-qstd(c(probability),  mean=0, sd=1,nu=df) 
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_std[1]
+  df[2,1]<-quantil_std[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+```{r fig.width=13,echo=FALSE}
+studentt95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+studentt99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(studentt95,studentt99,nrow=1,
+  top=grid.text("Gráfico 2 - VaR segun distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+### *Modelo distribucion de Error Generalizada (GED)*
+
+```{r echo=FALSE}
+modelo_ged<-gedFit(data$yield)
+Fobjetivo_ged<-modelo_ged$objective
+parametros<-modelo_ged$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_ged<-qged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_ged[1]
+  df[2,1]<-quantil_ged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+ged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (5%)")
+ged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico 3 - VaR segun distribución de Error generalizada (GED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+### *Modelo distribucion de Error Generalizada Asimétrica (sGED)*
+
+```{r,echo=FALSE}
+modelo_sged<-sgedFit(data$yield)
+Fobjetivo_sged = modelo_sged$objective
+parametros<-modelo_sged$par
+parametros<-matrix(parametros, 4, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_sged<-qsged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_sged[1]
+  df[2,1]<-quantil_sged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling( position = "left")
+```
+\
+
+\
+
+```{r fig.width=13, echo=FALSE}  
+sged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+sged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(ged95,ged99,nrow=1,top=grid.text
+  ("Gráfico 4 - VaR segun distribución de Error generalizada asimétrica(sGED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+El VaR es mayor con un coeficiente de riesgo del 5% que con un coeficiente de riesgo del 1% en todas las distribuciones, ya que ocupa mas zona a la izquierda del percentil, sea cual sea la distribucion.
+
+No se observan grandes diferencias entre las diferentes distribuciones con un coeficiente de riesgo del 5%. Las excepciones $r< VaR(\alpha)$ son parecidas en todas las distribuciones con este nivel de riesgo. 
+
+Sin embargo y en una primera aproximación, si que se ven mas diferencias cuando el coeficiente de riesgo es 1%. 
+Desde la distribucion normal a la de error generalizada asimétrica, pasando por t-student y error generalizada por este orden, las excepciones van disminuyendo, principalmente porque el VaR va disminuyendo y tomando distancia de los rendimientos mínimos, con lo que segun pasamos de la distribución normal a la t-student, luego a la de error generalizado y a la de error generalziado asimétrico aumenta la sobrevaloración del riesgo.
+
+Todo esto , como mejor se va a ver es en la próxima sección, backtesting. Aqui veremos un método preciso para saber cuan buenas son las estimaciones VaR en cada una de las distribuciones.
+\
+
+\
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section*{BACKTESTING}
+\end{centering}
+
+```{r echo=FALSE}
+data<-read.csv('/home/miguel/UNED_2021/Proyecto/IBEX35/VAR/student-t/VaR_tstudent.csv')
+data<-data[-1,]
+```
+
+En primer lugar haremos backtesting basado en tests de precisión, esto es contrastando si el número y porcentaje de excepciones es igual al teórico. Para ello, y como indicamos en la sección de metodología, utilizaremos el test de hipótesis. Seguidamente hallaremos las funciones de pérdida, examinando la distancia entre los rendimientos observados y la previsión del VaR en los casos en los que se ha obtenido una excepción, permitiendónos clasificar los modelos alternativos.
+
+Para evaluar cuan buenas son las estimaciones VaR con los test de precisión utilizaremos el test de Kupiec explicado en la seccion de metodología.
+
+La fórmula del test es:
+
+$$
+LRuc (Test\ de\  Kupiec) = 2*log(\frac{\hatα ^ x ( 1− α ) ^ {N-x}}{\hatα ^ x ( 1− α ) ^ {N-x}}) 
+$$
+Tenemos que calcular primero las excepciones: yield < VaR y seguidamente el porcentaje que representan sobre las estimaciones de VaR para las diferentes distribuciones.
+
+Los resultados de las excepciones y de los porcentajes para las diferentes distribuciones y los diferentes coeficientes de riesgo son las siguientes.
+
+## *BACKTESTING DISTRIBUCIONES*
+
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,nrow=4, ncol=4))
+for (i in 1:4){
+  df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
+  df[2,1]<- round(df[1,1]/dim(data)[1],digits=4)
+  df[3,1]<- round(sum(data$yield<data$VaR99,na.rm=TRUE),digits=0)
+  df[4,1]<- round(df[3,1]/dim(data)[1],digits=4)
+  df[1,2]<-round(sum(data$yield<data$studentt95,na.rm=TRUE),digits=0)
+  df[2,2]<-round(df[1,2]/dim(data)[1],digits=4)
+  df[3,2]<-round(sum(data$yield<data$studentt99,na.rm=TRUE),digits=0)
+  df[4,2]<-round(df[3,2]/dim(data)[1],digits=4)
+  df[1,3]<-round(sum(data$yield<data$Ged95,na.rm=TRUE),digits=0)
+  df[2,3]<-round(df[1,3]/dim(data)[1],digits=4)
+  df[3,3]<-round(sum(data$yield<data$Ged99,na.rm=TRUE),digits=0)
+  df[4,3]<-round(df[3,3]/dim(data)[1],digits=4)
+  df[1,4]<-round(sum(data$yield<data$sged95,na.rm=TRUE),digits=0)
+  df[2,4]<-round(df[1,4]/dim(data)[1],digits=4)
+  df[3,4]<-round(sum(data$yield<data$sged99,na.rm=TRUE),digits=0)
+  df[4,4]<-round(df[3,4]/dim(data)[1],digits=4)
+}
+
+
+colnames(df)<- c("normal","t-student","error generalizada", "error generalizada asimétrica")
+rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3-Número excepciones","4-Porcentaje excepciones")
+
+df%>%
+  kbl(booktabs=T) %>%
+  kable_styling(latex_options="scale_down",position="left")%>%
+  row_spec(0, monospace=TRUE,align="r") %>%
+  column_spec(1, width = "12em")%>%
+  column_spec(2:5, width = "7em")%>%
+  pack_rows("Coeficiente Riesgo 5%", 1, 2) %>%
+  pack_rows("Coeficiente Riesgo 1%", 3, 4)
+```
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion normal}} 
+\endgroup
+
+##### Coeficiente de Riesgo 5%
+\
+
+\
+Como el porcentaje de excepciones es practicamente igual que el coeficiente de riesgo, $0.0509≃0.05$, tenemos que el numerador y denominador del logaritmo en la fórmula del test de Kupiec son iguales. Con lo que
+
+$LRuc=2*log(1)=2*0=0$
+
+Al ser este valor menor que el valor crítico para un coeficiente de riesgo del 5% en una distribución normal: 0 < 1.65, podemos aceptar la hipótesis nula que indica que el porcentaje de excepciones obtenido es igual al porcentaje de excepciones esperado y que por tanto las estimaciones del VaR son precisas.
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.0095 ^ {47} ( 1− 0.0095 ) ^ {4947-47}}{0.01 ^ {47}( 1− 0.01 ) ^ {4947-47}}) 
+$$
+LRuc= 0.05501
+
+Al ser este valor menor que el valor crítico para un coeficiente de riesgo del 1% en una distribución normal: 0.05501 < 2.33, podemos aceptar la hipótesis nula que indica que el porcentaje de excepciones obtenido es igual al porcentaje de excepciones esperado y que por tanto las estimaciones del VaR son precisas.
+\
+
+\
+
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion t-student}} 
+\endgroup
+
+#### Coeficiente de Riesgo 5%
+
+
+$$
+LRuc = 2*log(\frac{0.0722 ^ {357} ( 1− 0.0722 ) ^ {4947-357}}{0.05 ^ {357}( 1− 0.05 ) ^ {4947-357}}) 
+$$
+El denominador de este logaritmo es 0, por lo que el resultado del logaritmo nos da sin definir. Con lo que podemos rechazar la hipótesis nula al no haber comparacion posible con el valor crítico de esta distribución (1.4665) para un coeficiente de riesgo del 5%. Y por tantos podemos decir que las estimaciones de VaR no son precisas. 
+
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.0036 ^ {18} ( 1− 0.0036 ) ^ {4947-18}}{0.01 ^ {18}( 1− 0.01 ) ^ {4947-18}}) 
+$$
+LRuc= 11.6147
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 1% en una distribución t-student: 11.6147 > 2.6585, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion error generalizada(GED)}} 
+\endgroup
+
+#### Coeficiente de riesgo 5%
+
+$$
+LRuc = 2*log(\frac{0.0115 ^ {57} ( 1− 0.0115 ) ^ {4947-57}}{0.05 ^ {57}( 1− 0.05 ) ^ {4947-57}}) 
+$$
+LRuc= 95.9719
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 5% en una distribución de Error Generalizada: 95.9719 > 2.2786, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+
+#### Coeficiente de riesgo 1%
+\
+
+\
+No hay excepciones. La estimación del VaR queda lejos del rango en que se mueven los rendimientos, con lo que podemos concluir que en esta caso esa estimación tampoco es válida.
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting error generalizada asimétrica (sGED)}} 
+\endgroup
+
+
+#### Coeficiente de riesgo 5%
+
+$$
+LRuc = 2*log(\frac{0.034 ^ {168} ( 1− 0.034 ) ^ {4947-168}}{0.05 ^ {168}( 1− 0.05 ) ^ {4947-168}}) 
+$$
+
+El denominador de este logaritmo es 0, por lo que el resultado del logaritmo nos da sin definir. Con lo que podemos rechazar la hipótesis nula al no haber comparacion posible con el valor crítico de esta distribución (1.8116) para un coeficiente de riesgo del 5%. Y por tantos podemos decir que las estimaciones de VaR no son precisas. 
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.003 ^ {15} ( 1− 0.003 ) ^ {4947-15}}{0.01 ^ {15}( 1− 0.01 ) ^ {4947-15}}) 
+$$
+LRuc= 14.4971
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 1% en una distribución de error generalizada asimétrica: 14.4971 > 2.7274, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+
+
+## *FUNCIONES DE PERDIDA BAJO LAS DIFERENTES DISTRIBUCIONES*
+
+La función de pérdida examina la distancia entre los rendimientos observados y la previsión del VaR en los casos en los que se ha obtenido una excepción.
+López (1999) propone una forma general para la función de pérdida. Esta función de pérdida tiene la siguiente especificación cuadrática.
+
+$LF = 1+(r_{t}-VaR( α ))^{2}$ si  $r_{t}<VaR( α )$ ; $0$ si $r_{t}>VaR( α )$
+\
+
+\
+
+```{r fig.width=13, echo=FALSE}
+data$LFNormal95<-ifelse(data$yield<data$VaR95,1+(data$yield-data$VaR95)^2,0)
+data$LFNormal99<-ifelse(data$yield<data$VaR99,1+(data$yield-data$VaR99)^2,0)
+normal95<-ggplot(data,aes(position,LFNormal95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+normal99<-ggplot(data,aes(position,LFNormal99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION NORMAL",gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+
+
+```{r fig.width=13,echo=FALSE}
+data$LFStudent95<-ifelse(data$yield<data$studentt95,1+(data$yield-data$studentt95)^2,0)
+data$LFStudent99<-ifelse(data$yield<data$studentt99,1+(data$yield-data$studentt99)^2,0)
+student95<-ggplot(data,aes(position,LFStudent95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+student99<-ggplot(data,aes(position,LFStudent99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION T-STUDENT",gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+data$LFGed95<-ifelse(data$yield<data$Ged95,1+(data$yield-data$Ged95)^2,0)
+data$LFGed99<-ifelse(data$yield<data$Ged99,1+(data$yield-data$Ged99)^2,0)
+ged95<-ggplot(data,aes(position,LFGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+ged99<-ggplot(data,aes(position,LFGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+data$LFsGed95<-ifelse(data$yield<data$sged95,1+(data$yield-data$sged95)^2,0)
+data$LFsGed99<-ifelse(data$yield<data$sged99,1+(data$yield-data$sged99)^2,0)
+sged95<-ggplot(data,aes(position,LFsGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+sged99<-ggplot(data,aes(position,LFsGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(sged95,sged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA ASIMETRICA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+\begin{centering}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section*{CONCLUSION}
+\end{centering}
+
+De los resultados  presentados en este trabajo podemos concluir que la distribución normal supera la distribución t-student, la de error generalizado y la de error generalizado asimétrico, en ajustarse a los retornos financieros y en predecir el VaR del Ibex35 en el periodo comprendido entre 2000 y 2019. En términos
+de su habilidad para predecir el VaR, la distribución normal provee la estimación mas precisa. En términos estadísticos, esta distribución se ajusta a los datos mejor que las otras.
+
+En relación a la precisión de las estimaciones VaR, la distribución normal supera a las demas ya que las pruebas realizadas sobre las estimaciones de las diferentes distribuciones a traves del test de Kupiec, da a las distribución normal (tanto para los coeficientes de riesgo del 5% y 1%) como las únicas precisas.
+
+En resumen, la distribución normal es el modelo que mejor se ajusta a los rendimientos y a la estimación VaR del Ibex35 desde el año 2000 hasta el año 2019.
+
+\
+
+\
+
+## APENDICE CODIGO R
+
+###### FUNCIONES DENSIDAD DISTRIBUCIONES
+```{r eval=FALSE}
+par(mfrow=c(2,2))
+x<-rnorm(1000)
+curve(dnorm(x,mean(x),sd(x)), col = "orange", xlab = "quantile", ylab = "densidad",
+      main="Distribucion normal")
+x<-rt(40,39)
+curve(dt(x, 30), from = -5, to = 5, col = "orange", xlab = "quantile", ylab = "densidad", 
+      lwd = 2, main="Distribución t-student")
+x<-rged(n=1000)
+modelo_ged<-gedFit(x)
+curve(dged(x,mean=modelo_ged$par[1],sd=modelo_ged$par[2],nu=modelo_ged$par[3]), 
+      col = "orange", xlab = "quantile", ylab = "densidad", main="Distribución Error Generalizada")
+x<-rsged(n=1000)
+modelo_sged<-sgedFit(x)
+curve(dsged(x,mean=modelo_sged$par[1],sd=modelo_sged$par[2],nu=modelo_sged$par[3]), 
+      col = "orange", xlab = "quantile", ylab = "densidad",
+      main="Distribución error generalizada \nasimétrica")
+```
+###### DATOS
+```{r eval=FALSE}
+g<-ggplot(ibex2,aes(Order,Indice))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family = "Times")+theme(axis.text.x=element_text(angle=90),
+  plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),
+    axis.title.x = element_text(color="orange"),
+    axis.title.y = element_text(color="orange"))+
+  labs(x="Año",title="IBEX 35")
+```
+```{r eval=FALSE}
+g<-ggplot(ibex2,aes(Order,Yield))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),
+        axis.title.y = element_text(color="orange"))+labs(x="Año",title="Rendimientos del IBEX35")
+```
+###### ESTADISTICOS DESCRIPTIVOS
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,7,1))
+for(i in 1:7){
+  df[1,1]<-round(mean(ibex2$Yield,na.rm=TRUE))
+  df[2,1]<-round(median(ibex2$Yield,na.rm=TRUE))
+  df[3,1]<-round(max(ibex2$Yield,na.rm=TRUE))
+  df[4,1]<-round(min(ibex2$Yield,na.rm=TRUE))
+  df[5,1]<-round(sd(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[6,1]<-round(skewness(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[7,1]<-round(kurtosis(ibex2$Yield,na.rm=TRUE),digits=2)
+}
+
+names(df)<- "Estadísticos descriptivos 
+             rendimientos IBEX35"
+rownames(df)<-c("Media","Mediana","Máximo","Mínimo","Desviación Tipica (Standard Deviation)",
+                "Coeficiente Asimetría (Skewness)","Coeficiente Curtosis (Kurtosis)")
+df %>%
+  kbl(booktabs=T) %>%
+  column_spec(2,width="20em") %>%
+  kable_styling(latex_options="scale_down", position = "left")%>%
+  footnote(general="Estadísticos descriptivos de los rendimientos del IBEX35 entre el 2000 y el 2019")
+```
+###### VaR DISTRIBUCION NORMAL
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<- -1.65
+  df[2,1]<- -2.33
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+normal95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+normal99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución normal",gp=gpar(fontsize=20,col="red"))
+  )
+```
+###### VaR DISTRIBUCION T-STUDENT
+```{r eval=FALSE}
+modelo_std<-stdFit(data$yield)
+Fobjetivo_std<-modelo_std$objective
+parametros<-modelo_std$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_std<-qstd(c(probability),  mean=0, sd=1,nu=df) 
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_std[1]
+  df[2,1]<-quantil_std[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+studentt95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+studentt99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(studentt95,studentt99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+###### VaR DISTRIBUCION ERROR GENERALIZADO
+```{r eval=FALSE}
+modelo_ged<-gedFit(data$yield)
+Fobjetivo_ged<-modelo_ged$objective
+parametros<-modelo_ged$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_ged<-qged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_ged[1]
+  df[2,1]<-quantil_ged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+ged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (5%)")
+ged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución de Error generalizada (GED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+###### VaR DISTRIBUCION ERROR GENERALIZADO ASIMETRICO
+
+```{r eval=FALSE}
+modelo_sged<-sgedFit(data$yield)
+Fobjetivo_sged = modelo_sged$objective
+parametros<-modelo_sged$par
+parametros<-matrix(parametros, 4, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_sged<-qsged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_sged[1]
+  df[2,1]<-quantil_sged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+
+```
+
+```{r eval=FALSE}
+sged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+sged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(ged95,ged99,nrow=1,top=grid.text
+  ("Gráfico VaR segun distribución de Error generalizada asimétrica(sGED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+###### BACKTESTING DISTRIBUCIONES
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,nrow=4, ncol=4))
+for (i in 1:4){
+  df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
+  df[2,1]<- round(df[1,1]/dim(data)[1],digits=4)
+  df[3,1]<- round(sum(data$yield<data$VaR99,na.rm=TRUE),digits=0)
+  df[4,1]<- round(df[3,1]/dim(data)[1],digits=4)
+  df[1,2]<-round(sum(data$yield<data$studentt95,na.rm=TRUE),digits=0)
+  df[2,2]<-round(df[1,2]/dim(data)[1],digits=4)
+  df[3,2]<-round(sum(data$yield<data$studentt99,na.rm=TRUE),digits=0)
+  df[4,2]<-round(df[3,2]/dim(data)[1],digits=4)
+  df[1,3]<-round(sum(data$yield<data$Ged95,na.rm=TRUE),digits=0)
+  df[2,3]<-round(df[1,3]/dim(data)[1],digits=4)
+  df[3,3]<-round(sum(data$yield<data$Ged99,na.rm=TRUE),digits=0)
+  df[4,3]<-round(df[3,3]/dim(data)[1],digits=4)
+  df[1,4]<-round(sum(data$yield<data$sged95,na.rm=TRUE),digits=0)
+  df[2,4]<-round(df[1,4]/dim(data)[1],digits=4)
+  df[3,4]<-round(sum(data$yield<data$sged99,na.rm=TRUE),digits=0)
+  df[4,4]<-round(df[3,4]/dim(data)[1],digits=4)
+}
+colnames(df)<- c("normal","t-student","error generalizada", "error generalizada asimétrica")
+rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3-Número excepciones",
+                "4-Porcentaje excepciones")
+
+df%>%
+  kbl(booktabs=T) %>%
+  kable_styling(latex_options="scale_down",position="left")%>%
+  row_spec(0, monospace=TRUE,align="r") %>%
+  column_spec(1, width = "12em")%>%
+  column_spec(2:5, width = "7em")%>%
+  pack_rows("Coeficiente Riesgo 5%", 1, 2) %>%
+  pack_rows("Coeficiente Riesgo 1%", 3, 4)
+```
+
+###### FUNCION PERDIDA DISTRIBUCION NORMAL
+```{r eval=FALSE}
+data$LFNormal95<-ifelse(data$yield<data$VaR95,1+(data$yield-data$VaR95)^2,0)
+data$LFNormal99<-ifelse(data$yield<data$VaR99,1+(data$yield-data$VaR99)^2,0)
+normal95<-ggplot(data,aes(position,LFNormal95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+normal99<-ggplot(data,aes(position,LFNormal99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución normal",gp=gpar(fontsize=20,col="red")))
+```
+
+###### FUNCION PERDIDA DISTRIBUCION T-STUDENT
+```{r eval=FALSE}
+data$LFStudent95<-ifelse(data$yield<data$studentt95,1+(data$yield-data$studentt95)^2,0)
+data$LFStudent99<-ifelse(data$yield<data$studentt99,1+(data$yield-data$studentt99)^2,0)
+student95<-ggplot(data,aes(position,LFStudent95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+student99<-ggplot(data,aes(position,LFStudent99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+
+###### FUNCION PERDIDA DISTRIBUCION ERROR GENERALIZADO
+```{r eval=FALSE}
+data$LFGed95<-ifelse(data$yield<data$Ged95,1+(data$yield-data$Ged95)^2,0)
+data$LFGed99<-ifelse(data$yield<data$Ged99,1+(data$yield-data$Ged99)^2,0)
+ged95<-ggplot(data,aes(position,LFGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+ged99<-ggplot(data,aes(position,LFGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución de Error Generalizada",
+      gp=gpar(fontsize=20,col="red")))
+```
+
+###### FUNCION PERDIDA DISTRIBUCION ERROR GENERALIZADO ASIMETRICO
+```{r eval=FALSE}
+data$LFsGed95<-ifelse(data$yield<data$sged95,1+(data$yield-data$sged95)^2,0)
+data$LFsGed99<-ifelse(data$yield<data$sged99,1+(data$yield-data$sged99)^2,0)
+sged95<-ggplot(data,aes(position,LFsGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+sged99<-ggplot(data,aes(position,LFsGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(sged95,sged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA ASIMETRICA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+

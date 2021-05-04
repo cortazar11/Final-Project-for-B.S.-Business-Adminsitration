@@ -1,0 +1,1012 @@
+---
+title: "**EN EL CONTEXTO DEL METODO PARAMETRICO COMPARATIVA DE DISTRIBUCIONES EN TERMINOS DE VALOR EN RIESGO - VaR (Value at Risk).**  \n(Version Intermedia)"
+author: Miguel Martinez
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
+- \usepackage{sectsty}
+
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE}
+library(fGarch)
+library(kableExtra)
+library(tidyverse)
+library(grid)
+library(gridExtra)
+```
+
+\begin{center}
+\sectionfont{\fontsize{20}{15}\selectfont\underline}
+\color{blue}
+\section{INTRODUCCION}
+\end{center}
+$$
+\Huge{\color{blue}{\overline{\underline{INTRODUCCION}}}}
+$$ 
+
+
+Este trabajo es un estudio de las diferentes distribuciones que permiten calcular el Valor en Riesgo VaR ("Value at Risk") de los activos que componen el índice IBEX35, principal índice bursátil de referencia de la bolsa española.
+
+Para ello se han utilizado datos diarios del índice desde el año 2000 hasta 2019.
+
+El valor en riesgo (VaR) es un estadístico que mide y cuantifica el máximo de pérdida esperada en una cartera de activos en un periodo de tiempo a un nivel de confianza determinado. Desde que el comité de Basilea de Supervisión Bancaria del Banco de Pagos Internacionales requiere a las instituciones financieras cumplir con los requerimientos de capital en base a las estimaciones del Valor en Riesgo (VaR), esta medida se ha convertido en una herramienta básica del riesgo de mercado.
+
+En este trabajo utilizaremos datos diarios del índice IBEX35 sobre 20 años (2000-2019) como ya hemos indicado. Con esta medida determinaremos la extensión de las pérdidas potenciales de los activos que componen el índice.
+Se mide el VaR evaluando la cantidad de pérdidas potenciales, la probabilidad de que ocurra para una cantidad de pérdida y el horizonte temporal.
+
+Por ejemplo, si una cartera de activos tiene un diario 5% Valor en Riesgo de 100.000 € significa que hay un 5% de probabilidad que la cartera de activos pierda mas de 100.000 € en el periodo de un dia.
+
+
+$$\Huge
+{\color{blue}{\overline{\underline{METODOLOGIA}}}}
+$$ 
+
+
+Para estimar este valor utilizaremos el método paramétrico comparando cuatro posible distribuciones estadísticas que puede seguir el VaR:
+
+* Distribución normal.
+* Distribución t-student.
+* Distribución de Error Generalizada.
+* Distribución de Error Generalizada Asimétrica.
+
+Una vez calculado el VaR en las diferentes distribuciones validaremos las estimaciones mediante el 'backtesting', procedimiento que nos dirá cuan buenas son esas estimaciones y por tanto qué distribución se ajusta mejor para estimar el VaR.
+
+En el marco de las técnicas paramétricas, podemos estimar el VaR como $VaR_{t}=\mu_{t}+\hat\sigma_{t}k_{\alpha}$
+donde $\mu_{t}$ representa la media, $\hat\sigma_{t}$ la desviación standard y $k_{\alpha}$ denota el correspondiente quantil de la distribución de los rendimientos standarizados a un nivel de confianza de $1-\alpha$.
+
+Finalmente, una vez calculada la varianza, estimamos las distribuciones de los rendimientos estandarizados bajo cada una de las distribuciones consideradas: normal, t-student, error generalizada, error generalizada asimétrica.
+
+Las funciones de densidad de las distribuciones con las que trabajaremos son las siguientes:
+
+\begingroup
+\fontfamily{phv}\fontsize{10}{12}\selectfont
+\center \textcolor{orange}{FUNCIONES DENSIDAD DISTRIBUCIONES} \center
+\endgroup
+
+
+```{r echo=FALSE}
+par(mfrow=c(2,2))
+x<-rnorm(1000)
+curve(dnorm(x,mean(x),sd(x)), col = "orange", from=-5, to=5,xlab = "quantile", ylab = "densidad",main="Distribucion normal")
+x<-rt(40,39)
+curve(dt(x, 39), from = -5, to = 5, col = "orange", xlab = "quantile", ylab = "densidad", lwd = 2, main="Distribución t-student")
+x<-rged(n=1000)
+modelo_ged<-gedFit(x)
+curve(dged(x,mean=modelo_ged$par[1],sd=modelo_ged$par[2],nu=modelo_ged$par[3]), col = "orange", from=-5,to=5,xlab = "quantile", ylab = "densidad", main="Distribución error generalizada")
+x<-rsged(n=1000)
+modelo_sged<-sgedFit(x)
+curve(dsged(x,mean=modelo_sged$par[1],sd=modelo_sged$par[2],nu=modelo_sged$par[3]), col = "orange", from=-5, to=5, xlab = "quantile", ylab = "densidad",main="Distribución error generalizada \nasimétrica")
+```
+
+
+Asi pues, en primer lugar calcularemos el VaR. Tenemos una excepción cuando $r_{t+1}<VaR(\alpha)$.
+Seguidamente, comprobamos la precisión de las estimaciones de VaR mediante el test de Kupiec:
+
+$$
+LRuc (Test\ de\  Kupiec) = 2*log(\frac{\hatα ^ x ( 1− α ) ^ {N-x}}{\hatα ^ x ( 1− α ) ^ {N-x}}) 
+$$
+
+Adicionalmente, evaluamos la magnitud de las pérdidas experimentadas. Seguimos la función de pérdida propuesta por López. Con esta especificación, la función de pérdida asigna una especificación cuadrática cuando las pérdidas observadas de la cartera de activos exceden el VaR estimado:
+
+$LF = 1+(r_{t}-VaR( α ))^{2}$ si  $r_{t}<VaR( α )$ ; $0$ si $r_{t}>VaR( α )$
+
+El término cuadrático asegura que los fallos grandes son penalizados mas que los fallos pequeños.
+\
+
+\
+
+$$\Huge
+{\color{blue}{\overline{\underline{DATOS}}}}
+$$ 
+
+
+Esto es la primera tarea para mi trabajo. Aqui indico el plot y estadísticos del Rendimiento.
+
+
+```{r echo=FALSE, message=FALSE}
+load("/home/miguel/UNED_2021/Proyecto/R Language/.RData")
+library(tidyverse)
+library(moments)
+library(kableExtra)
+```
+\
+
+
+\
+*GRAFICOS*
+\
+
+
+\
+
+```{r echo=FALSE, message=FALSE}
+g<-ggplot(ibex2,aes(Order,Indice))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family = "Times")+theme(axis.text.x =     element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),axis.title.y = element_text(color="orange"))+
+  labs(x="Año",title="IBEX 35")
+```
+\
+
+\
+
+En este gráfico podemos ver las oscilaciones del IBEX35 a lo largo de 20 años; desde el 2000 hasta 2019.
+
+En primer lugar hay una caida sostenida desde el 2000 hasta finales 2002-inicios de 2003. Periodo que corresponde a la introduccion del euro como moneda oficial en sustitución de la peseta, que dejó de circular en 2002. En este periodo, aunque la mayoria de indicadores económicos no fueron malos (Producto Interior Bruto, Tasa de desempleo, Deuda Pública), las tasas de inflacion fueron elevadas, situandose en niveles de 1995 (2000: 4%, 2001: 2.7%, 2002: 4%).
+
+Luego se ve la caída que comienza en 2007 con la crisis financiera internacional y se prolonga hasta principios 2009, donde comienza a recuperarse el índice hasta principios de 2010, donde comienzan unos dientes de sierra, hasta que en 2012 España solicite un rescate bancario de hasta cien mil millones de euros. Es en este punto donde el índice se volvería a derrumbar a un nivel aun mayor que cuando comenzó la crisis
+
+A partir de esta fecha la recuperación sería muy lenta, alcanzando otro máximo a mediados 2005. Es en 2004-2005 cuando le economía española comenzaría una lenta recuperación. Sin embargo el índice ha continuado con fuertes oscilaciones: en 2016 cayó, en 2017 subió comenzando a caer otra vez hasta 2019 dónde tuvo una ligera subida. Probablemente esto sea debido a lo poco representativo que es éste índice de la economía española en general y se mueva atendiendo a otros criterios: politica monetaria Banco Central Europeo, economía Estados Unidos, etc.
+\
+
+\
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+g<-ggplot(ibex2,aes(Order,Yield))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+theme(plot.margin=unit(c(1,1,1,1),"cm"))+theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),axis.title.y = element_text(color="orange"))+labs(x="Año",title="Rendimientos del IBEX35")
+```
+\
+
+\
+En éste gráfico podemos ver las oscilaciones en los rendimientos IBEX35.
+
+Entre el 2000 y 2003 los rendimientos oscilan entre 5% y -5%, periodo que corresponde a la incertidumbre que trajo la introducción del euro. Esta oscilación se reduce sustancialmente hasta 2007, periodo en el que el euro está ya asentado y hay un fuerte crecimiento económico.
+
+Es en 2007, con la crisis financiera internacional, cuando las oscilaciones aumentan otra vez con evidentes "outliers": en 2008 habrá subidas del 10% y bajadas de hasta el -10%, señal de la enorme incertidumbre exitente. A partir de esta fecha las oscilaciones serán entre el 5% y el -5% hasta 2014, año de comienzo de la recuperación,  cuando la oscilación se reduce a la mitad. A partir de aquí la oscilación vuelve a aumentar ligeramente hasta 2016 y reducirse de nuevo en 2018 manteniéndose estable hasta 2019. En este último periodo que comienza en 2014, es de notar la existencia de importantes outliers, llegando a uno en 2016 con un rendimiento del -13%. Esto es señal del movimiento hasta cierto punto arbitrario del índice en este último periodo, o sensible a otros motivos diferentes a lo que son las variables de la economía española.
+\
+
+
+\
+*ESTADISTICOS DESCRIPTIVOS*
+\
+
+
+\
+
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,7,1))
+for(i in 1:7){
+  df[1,1]<-round(mean(ibex2$Yield,na.rm=TRUE))
+  df[2,1]<-round(median(ibex2$Yield,na.rm=TRUE))
+  df[3,1]<-round(max(ibex2$Yield,na.rm=TRUE))
+  df[4,1]<-round(min(ibex2$Yield,na.rm=TRUE))
+  df[5,1]<-round(sd(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[6,1]<-round(skewness(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[7,1]<-round(kurtosis(ibex2$Yield,na.rm=TRUE),digits=2)
+}
+
+names(df)<- "Estadísticos descriptivos 
+             rendimientos IBEX35"
+rownames(df)<-c("Media","Mediana","Máximo","Mínimo","Desviación Tipica (Standard Deviation)","Coeficiente Asimetría (Skewness)","Coeficiente Curtosis (Kurtosis)")
+df %>%
+  kbl(booktabs=T) %>%
+  column_spec(2,width="20em") %>%
+  kable_styling(latex_options="scale_down", position = "left")%>%
+  footnote(general="Estadísticos descriptivos de los rendimientos del IBEX35 entre el 2000 y el 2019")
+```
+\
+
+\
+
+$$\Huge
+{\color{blue}{\overline{\underline{RESULTADOS EMPIRICOS}}}}
+$$ 
+
+```{r echo=FALSE, message=FALSE}
+library(grid)
+library(fGarch)
+library(tidyverse)
+library(gridExtra)
+library(kableExtra)
+```
+
+```{r echo=FALSE}
+data<-read.csv('/home/miguel/UNED_2021/Proyecto/IBEX35/VAR/student-t/VaR_tstudent.csv')
+data<-data[-1,]
+```
+
+Primero usamos como medida de la volatilidad de los rendimientos financieros, la medida EWMA ("exponential weigh moving average model"):
+\begingroup
+\center $σ_{t}^2 =λσ_{t−1}^2+(1−λ)r_{t−1}^2$ \center
+\endgroup
+Seguidamente, calculamos el Valor en Riesgo para las diferentes distribuciones segun el método paramétrico:
+\begingroup
+\center $VaR_{t}(α)=μ t +σ_{t}q_{α}$ \center
+\endgroup
+donde  $μ_{t}$ representa la esperanza condicional de los rendimientos, $σ_{t}$ representa la desviación estándar condicional de los rendimientos de la cartera y $q_{α}$ representa el percentil $α$
+
+### *Modelo distribucion normal*
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<- -1.65
+  df[2,1]<- -2.33
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+```{r fig.width=13,echo=FALSE}
+normal95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+normal99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución normal",gp=gpar(fontsize=20,col="red"))
+  )
+```
+
+### *Modelo distribucion t-student*
+
+
+
+```{r echo=FALSE} 
+modelo_std<-stdFit(data$yield)
+Fobjetivo_std<-modelo_std$objective
+parametros<-modelo_std$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_std<-qstd(c(probability),  mean=0, sd=1,nu=df) 
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_std[1]
+  df[2,1]<-quantil_std[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+```{r fig.width=13,echo=FALSE}
+studentt95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+studentt99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(studentt95,studentt99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+### *Modelo distribucion de Error Generalizada (GED)*
+
+```{r echo=FALSE}
+modelo_ged<-gedFit(data$yield)
+Fobjetivo_ged<-modelo_ged$objective
+parametros<-modelo_ged$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_ged<-qged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_ged[1]
+  df[2,1]<-quantil_ged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+ged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (5%)")
+ged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución de Error generalizada (GED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+### *Modelo distribucion de Error Generalizada Asimétrica (sGED)*
+
+```{r,echo=FALSE}
+modelo_sged<-sgedFit(data$yield)
+Fobjetivo_sged = modelo_sged$objective
+parametros<-modelo_sged$par
+parametros<-matrix(parametros, 4, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_sged<-qsged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_sged[1]
+  df[2,1]<-quantil_sged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling( position = "left")
+```
+\
+
+\
+
+```{r fig.width=13, echo=FALSE}  
+sged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+sged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(ged95,ged99,nrow=1,top=grid.text
+  ("Gráfico VaR segun distribución de Error generalizada asimétrica(sGED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+\
+
+\
+
+$$\Huge
+{\color{blue}{\overline{\underline{BACKTESTING}}}}
+$$ 
+
+
+```{r echo=FALSE}
+data<-read.csv('/home/miguel/UNED_2021/Proyecto/IBEX35/VAR/student-t/VaR_tstudent.csv')
+data<-data[-1,]
+```
+Para evaluar cuan buenas son las estimaciones VaR utilizaremos el test de Kupiec:
+
+La fórmula del test es:
+$$
+LRuc (Test\ de\  Kupiec) = 2*log(\frac{\hatα ^ x ( 1− α ) ^ {N-x}}{\hatα ^ x ( 1− α ) ^ {N-x}}) 
+$$
+Tenemos que calcular primero las excepciones: yield < VaR y seguidamente el porcentaje que representan sobre las estimaciones de VaR para las diferentes distribuciones.
+
+Los resultados de las excepciones y de los porcentajes para las diferentes distribuciones y los diferentes coeficientes de riesgo son las siguientes.
+
+## *BACKTESTING DISTRIBUCIONES*
+
+
+```{r echo=FALSE}
+df<-as.data.frame(matrix(0,nrow=4, ncol=4))
+for (i in 1:4){
+  df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
+  df[2,1]<- round(df[1,1]/dim(data)[1],digits=4)
+  df[3,1]<- round(sum(data$yield<data$VaR99,na.rm=TRUE),digits=0)
+  df[4,1]<- round(df[3,1]/dim(data)[1],digits=4)
+  df[1,2]<-round(sum(data$yield<data$studentt95,na.rm=TRUE),digits=0)
+  df[2,2]<-round(df[1,2]/dim(data)[1],digits=4)
+  df[3,2]<-round(sum(data$yield<data$studentt99,na.rm=TRUE),digits=0)
+  df[4,2]<-round(df[3,2]/dim(data)[1],digits=4)
+  df[1,3]<-round(sum(data$yield<data$Ged95,na.rm=TRUE),digits=0)
+  df[2,3]<-round(df[1,3]/dim(data)[1],digits=4)
+  df[3,3]<-round(sum(data$yield<data$Ged99,na.rm=TRUE),digits=0)
+  df[4,3]<-round(df[3,3]/dim(data)[1],digits=4)
+  df[1,4]<-round(sum(data$yield<data$sged95,na.rm=TRUE),digits=0)
+  df[2,4]<-round(df[1,4]/dim(data)[1],digits=4)
+  df[3,4]<-round(sum(data$yield<data$sged99,na.rm=TRUE),digits=0)
+  df[4,4]<-round(df[3,4]/dim(data)[1],digits=4)
+}
+
+
+colnames(df)<- c("normal","t-student","error generalizada", "error generalizada asimétrica")
+rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3-Número excepciones","4-Porcentaje excepciones")
+
+df%>%
+  kbl(booktabs=T) %>%
+  kable_styling(latex_options="scale_down",position="left")%>%
+  row_spec(0, monospace=TRUE,align="r") %>%
+  column_spec(1, width = "12em")%>%
+  column_spec(2:5, width = "7em")%>%
+  pack_rows("Coeficiente Riesgo 5%", 1, 2) %>%
+  pack_rows("Coeficiente Riesgo 1%", 3, 4)
+```
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion normal}} 
+\endgroup
+
+##### Coeficiente de Riesgo 5%
+\
+
+\
+Como el porcentaje de excepciones es practicamente igual que el coeficiente de riesgo, $0.0509≃0.05$, tenemos que el numerador y denominador del logaritmo en la fórmula del test de Kupiec son iguales. Con lo que
+
+$LRuc=2*log(1)=2*0=0$
+
+Al ser este valor menor que el valor crítico para un coeficiente de riesgo del 5% en una distribución normal: 0 < 1.65, podemos aceptar la hipótesis nula que indica que el porcentaje de excepciones obtenido es igual al porcentaje de excepciones esperado y que por tanto las estimaciones del VaR son precisas.
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.0095 ^ {47} ( 1− 0.0095 ) ^ {4947-47}}{0.01 ^ {47}( 1− 0.01 ) ^ {4947-47}}) 
+$$
+LRuc= 0.05501
+
+Al ser este valor menor que el valor crítico para un coeficiente de riesgo del 1% en una distribución normal: 0.05501 < 2.33, podemos aceptar la hipótesis nula que indica que el porcentaje de excepciones obtenido es igual al porcentaje de excepciones esperado y que por tanto las estimaciones del VaR son precisas.
+\
+
+\
+
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion t-student}} 
+\endgroup
+
+#### Coeficiente de Riesgo 5%
+
+
+$$
+LRuc = 2*log(\frac{0.0722 ^ {357} ( 1− 0.0722 ) ^ {4947-357}}{0.05 ^ {357}( 1− 0.05 ) ^ {4947-357}}) 
+$$
+El denominador de este logaritmo es 0, por lo que el resultado del logaritmo nos da sin definir. Con lo que podemos rechazar la hipótesis nula al no haber comparacion posible con el valor crítico de esta distribución (1.4665) para un coeficiente de riesgo del 5%. Y por tantos podemos decir que las estimaciones de VaR no son precisas. 
+
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.0036 ^ {18} ( 1− 0.0036 ) ^ {4947-18}}{0.01 ^ {18}( 1− 0.01 ) ^ {4947-18}}) 
+$$
+LRuc= 11.6147
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 1% en una distribución t-student: 11.6147 > 2.6585, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting distribucion error generalizada(GED)}} 
+\endgroup
+
+#### Coeficiente de riesgo 5%
+
+$$
+LRuc = 2*log(\frac{0.0115 ^ {57} ( 1− 0.0115 ) ^ {4947-57}}{0.05 ^ {57}( 1− 0.05 ) ^ {4947-57}}) 
+$$
+LRuc= 95.9719
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 5% en una distribución de Error Generalizada: 95.9719 > 2.2786, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+
+#### Coeficiente de riesgo 1%
+\
+
+\
+No hay excepciones. La estimación del VaR queda lejos del rango en que se mueven los rendimientos, con lo que podemos concluir que en esta caso esa estimación tampoco es válida.
+\
+
+\
+\begingroup
+\fontfamily{phv}\fontsize{12}{14}\selectfont
+\underline{\textcolor{orange}{Backtesting error generalizada asimétrica (sGED)}} 
+\endgroup
+
+
+#### Coeficiente de riesgo 5%
+
+$$
+LRuc = 2*log(\frac{0.034 ^ {168} ( 1− 0.034 ) ^ {4947-168}}{0.05 ^ {168}( 1− 0.05 ) ^ {4947-168}}) 
+$$
+
+El denominador de este logaritmo es 0, por lo que el resultado del logaritmo nos da sin definir. Con lo que podemos rechazar la hipótesis nula al no haber comparacion posible con el valor crítico de esta distribución (1.8116) para un coeficiente de riesgo del 5%. Y por tantos podemos decir que las estimaciones de VaR no son precisas. 
+
+#### Coeficiente de riesgo 1%
+
+$$
+LRuc = 2*log(\frac{0.003 ^ {15} ( 1− 0.003 ) ^ {4947-15}}{0.01 ^ {15}( 1− 0.01 ) ^ {4947-15}}) 
+$$
+LRuc= 14.4971
+
+Al ser este valor mucho mayor que el valor crítico para un coeficiente de riesgo del 1% en una distribución de error generalizada asimétrica: 14.4971 > 2.7274, rechazamos la hipótesis nula con lo que la diferencia del porcentaje de excepciones obtenido y el porcentaje de excepciones esperado es significativa y por tanto las estimaciones de VaR no son precisas.
+
+
+## *FUNCIONES DE PERDIDA BAJO LAS DIFERENTES DISTRIBUCIONES*
+
+La función de pérdida examina la distancia entre los rendimientos observados y la previsión del VaR en los casos en los que se ha obtenido una excepción.
+López (1999) propone una forma general para la función de pérdida. Esta función de pérdida tiene la siguiente especificación cuadrática.
+
+$LF = 1+(r_{t}-VaR( α ))^{2}$ si  $r_{t}<VaR( α )$ ; $0$ si $r_{t}>VaR( α )$
+\
+
+\
+
+```{r fig.width=13, echo=FALSE}
+data$LFNormal95<-ifelse(data$yield<data$VaR95,1+(data$yield-data$VaR95)^2,0)
+data$LFNormal99<-ifelse(data$yield<data$VaR99,1+(data$yield-data$VaR99)^2,0)
+normal95<-ggplot(data,aes(position,LFNormal95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+normal99<-ggplot(data,aes(position,LFNormal99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION NORMAL",gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+
+
+```{r fig.width=13,echo=FALSE}
+data$LFStudent95<-ifelse(data$yield<data$studentt95,1+(data$yield-data$studentt95)^2,0)
+data$LFStudent99<-ifelse(data$yield<data$studentt99,1+(data$yield-data$studentt99)^2,0)
+student95<-ggplot(data,aes(position,LFStudent95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+student99<-ggplot(data,aes(position,LFStudent99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION T-STUDENT",gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+data$LFGed95<-ifelse(data$yield<data$Ged95,1+(data$yield-data$Ged95)^2,0)
+data$LFGed99<-ifelse(data$yield<data$Ged99,1+(data$yield-data$Ged99)^2,0)
+ged95<-ggplot(data,aes(position,LFGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+ged99<-ggplot(data,aes(position,LFGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+
+```{r fig.width=13,echo=FALSE}
+data$LFsGed95<-ifelse(data$yield<data$sged95,1+(data$yield-data$sged95)^2,0)
+data$LFsGed99<-ifelse(data$yield<data$sged99,1+(data$yield-data$sged99)^2,0)
+sged95<-ggplot(data,aes(position,LFsGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+sged99<-ggplot(data,aes(position,LFsGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(sged95,sged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA ASIMETRICA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+\
+
+\
+$$\Huge
+{\color{blue}{\overline{\underline{CONCLUSIONES}}}}
+$$ 
+
+De los resultados  presentados en este trabajo podemos concluir que la distribución normal supera la distribución t-student, la de error generalizado y la de error generalizado asimétrico, en ajustarse a los retornos financieros y en predecir el VaR del Ibex35 en el periodo comprendido entre 2000 y 2019. En términos
+de su habilidad para predecir el VaR, la distribución normal provee la estimación mas precisa. En términos estadísticos, esta distribución se ajusta a los datos mejor que las otras.
+
+En relación a la precisión de las estimaciones VaR, la distribución normal supera a las demas ya que las pruebas realizadas sobre las estimaciones de las diferentes distribuciones a traves del test de Kupiec, da a las distribución normal (tanto para los coeficientes de riesgo del 5% y 1%) como las únicas precisas.
+
+En resumen, la distribución normal es el modelo que mejor se ajusta a los rendimientos y a la estimación VaR del Ibex35 desde el año 2000 hasta el año 2019.
+
+\
+
+\
+
+## APENDICE CODIGO R
+
+###### FUNCIONES DENSIDAD DISTRIBUCIONES
+```{r eval=FALSE}
+par(mfrow=c(2,2))
+x<-rnorm(1000)
+curve(dnorm(x,mean(x),sd(x)), col = "orange", xlab = "quantile", ylab = "densidad",
+      main="Distribucion normal")
+x<-rt(40,39)
+curve(dt(x, 30), from = -5, to = 5, col = "orange", xlab = "quantile", ylab = "densidad", 
+      lwd = 2, main="Distribución t-student")
+x<-rged(n=1000)
+modelo_ged<-gedFit(x)
+curve(dged(x,mean=modelo_ged$par[1],sd=modelo_ged$par[2],nu=modelo_ged$par[3]), 
+      col = "orange", xlab = "quantile", ylab = "densidad", main="Distribución Error Generalizada")
+x<-rsged(n=1000)
+modelo_sged<-sgedFit(x)
+curve(dsged(x,mean=modelo_sged$par[1],sd=modelo_sged$par[2],nu=modelo_sged$par[3]), 
+      col = "orange", xlab = "quantile", ylab = "densidad",
+      main="Distribución error generalizada \nasimétrica")
+```
+###### DATOS
+```{r eval=FALSE}
+g<-ggplot(ibex2,aes(Order,Indice))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family = "Times")+theme(axis.text.x=element_text(angle=90),
+  plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),
+    axis.title.x = element_text(color="orange"),
+    axis.title.y = element_text(color="orange"))+
+  labs(x="Año",title="IBEX 35")
+```
+```{r eval=FALSE}
+g<-ggplot(ibex2,aes(Order,Yield))
+g+geom_point()+geom_smooth()+scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  theme(plot.margin=unit(c(1,1,1,1),"cm"))+
+  theme(plot.title=element_text(color="brown"),axis.title.x = element_text(color="orange"),
+        axis.title.y = element_text(color="orange"))+labs(x="Año",title="Rendimientos del IBEX35")
+```
+###### ESTADISTICOS DESCRIPTIVOS
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,7,1))
+for(i in 1:7){
+  df[1,1]<-round(mean(ibex2$Yield,na.rm=TRUE))
+  df[2,1]<-round(median(ibex2$Yield,na.rm=TRUE))
+  df[3,1]<-round(max(ibex2$Yield,na.rm=TRUE))
+  df[4,1]<-round(min(ibex2$Yield,na.rm=TRUE))
+  df[5,1]<-round(sd(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[6,1]<-round(skewness(ibex2$Yield,na.rm=TRUE),digits=2)
+  df[7,1]<-round(kurtosis(ibex2$Yield,na.rm=TRUE),digits=2)
+}
+
+names(df)<- "Estadísticos descriptivos 
+             rendimientos IBEX35"
+rownames(df)<-c("Media","Mediana","Máximo","Mínimo","Desviación Tipica (Standard Deviation)",
+                "Coeficiente Asimetría (Skewness)","Coeficiente Curtosis (Kurtosis)")
+df %>%
+  kbl(booktabs=T) %>%
+  column_spec(2,width="20em") %>%
+  kable_styling(latex_options="scale_down", position = "left")%>%
+  footnote(general="Estadísticos descriptivos de los rendimientos del IBEX35 entre el 2000 y el 2019")
+```
+###### VaR DISTRIBUCION NORMAL
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<- -1.65
+  df[2,1]<- -2.33
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+normal95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+normal99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=VaR99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución normal",gp=gpar(fontsize=20,col="red"))
+  )
+```
+###### VaR DISTRIBUCION T-STUDENT
+```{r eval=FALSE}
+modelo_std<-stdFit(data$yield)
+Fobjetivo_std<-modelo_std$objective
+parametros<-modelo_std$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_std<-qstd(c(probability),  mean=0, sd=1,nu=df) 
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_std[1]
+  df[2,1]<-quantil_std[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+studentt95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+studentt99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=studentt99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(studentt95,studentt99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+###### VaR DISTRIBUCION ERROR GENERALIZADO
+```{r eval=FALSE}
+modelo_ged<-gedFit(data$yield)
+Fobjetivo_ged<-modelo_ged$objective
+parametros<-modelo_ged$par
+parametros<-matrix(parametros, 3, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_ged<-qged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_ged[1]
+  df[2,1]<-quantil_ged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+```
+
+```{r eval=FALSE}
+ged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (5%)")
+ged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=Ged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coefficient of Risk (1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico VaR segun distribución de Error generalizada (GED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+###### VaR DISTRIBUCION ERROR GENERALIZADO ASIMETRICO
+
+```{r eval=FALSE}
+modelo_sged<-sgedFit(data$yield)
+Fobjetivo_sged = modelo_sged$objective
+parametros<-modelo_sged$par
+parametros<-matrix(parametros, 4, 1)
+media<-parametros[1,1]
+desviacion<-parametros[2,1]
+df<-parametros[3,1]
+probability<-c(0.05, 0.01)
+quantil_sged<-qsged(c(probability),mean=media,sd=desviacion,nu=df)
+df<-as.data.frame(matrix(0,2,1))
+for(i in 1:2){
+  df[1,1]<-quantil_sged[1]
+  df[2,1]<-quantil_sged[2]
+}
+
+colnames(df)<-"Percentiles"
+rownames(df)<-c("0.05 Probabilidad","0.01 Probabilidad")
+df %>%
+  kbl(booktabs=T) %>%
+  kable_styling(position = "left")
+
+```
+
+```{r eval=FALSE}
+sged95<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged95,colour="VaR(95%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (5%)")
+sged99<-ggplot(data,aes(position))+geom_line(aes(y=yield,colour="yield"))+
+ geom_line(aes(y=sged99,colour="VaR(99%)"))+
+ scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+ theme_bw(base_family="Times")+
+ theme(axis.text.x = element_text(angle=90),plot.title=element_text(size=14,hjust=0.5))+
+ labs(x="Año",y="Value (%)",title="Coeficiente de Riesgo (1%)")
+grid.arrange(ged95,ged99,nrow=1,top=grid.text
+  ("Gráfico VaR segun distribución de Error generalizada asimétrica(sGED)",
+  gp=gpar(fontsize=20,col="red")))
+```
+
+###### BACKTESTING DISTRIBUCIONES
+```{r eval=FALSE}
+df<-as.data.frame(matrix(0,nrow=4, ncol=4))
+for (i in 1:4){
+  df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
+  df[2,1]<- round(df[1,1]/dim(data)[1],digits=4)
+  df[3,1]<- round(sum(data$yield<data$VaR99,na.rm=TRUE),digits=0)
+  df[4,1]<- round(df[3,1]/dim(data)[1],digits=4)
+  df[1,2]<-round(sum(data$yield<data$studentt95,na.rm=TRUE),digits=0)
+  df[2,2]<-round(df[1,2]/dim(data)[1],digits=4)
+  df[3,2]<-round(sum(data$yield<data$studentt99,na.rm=TRUE),digits=0)
+  df[4,2]<-round(df[3,2]/dim(data)[1],digits=4)
+  df[1,3]<-round(sum(data$yield<data$Ged95,na.rm=TRUE),digits=0)
+  df[2,3]<-round(df[1,3]/dim(data)[1],digits=4)
+  df[3,3]<-round(sum(data$yield<data$Ged99,na.rm=TRUE),digits=0)
+  df[4,3]<-round(df[3,3]/dim(data)[1],digits=4)
+  df[1,4]<-round(sum(data$yield<data$sged95,na.rm=TRUE),digits=0)
+  df[2,4]<-round(df[1,4]/dim(data)[1],digits=4)
+  df[3,4]<-round(sum(data$yield<data$sged99,na.rm=TRUE),digits=0)
+  df[4,4]<-round(df[3,4]/dim(data)[1],digits=4)
+}
+colnames(df)<- c("normal","t-student","error generalizada", "error generalizada asimétrica")
+rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3-Número excepciones",
+                "4-Porcentaje excepciones")
+
+df%>%
+  kbl(booktabs=T) %>%
+  kable_styling(latex_options="scale_down",position="left")%>%
+  row_spec(0, monospace=TRUE,align="r") %>%
+  column_spec(1, width = "12em")%>%
+  column_spec(2:5, width = "7em")%>%
+  pack_rows("Coeficiente Riesgo 5%", 1, 2) %>%
+  pack_rows("Coeficiente Riesgo 1%", 3, 4)
+```
+
+###### FUNCION PERDIDA DISTRIBUCION NORMAL
+```{r eval=FALSE}
+data$LFNormal95<-ifelse(data$yield<data$VaR95,1+(data$yield-data$VaR95)^2,0)
+data$LFNormal99<-ifelse(data$yield<data$VaR99,1+(data$yield-data$VaR99)^2,0)
+normal95<-ggplot(data,aes(position,LFNormal95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+normal99<-ggplot(data,aes(position,LFNormal99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución normal",gp=gpar(fontsize=20,col="red")))
+```
+
+###### FUNCION PERDIDA DISTRIBUCION T-STUDENT
+```{r eval=FALSE}
+data$LFStudent95<-ifelse(data$yield<data$studentt95,1+(data$yield-data$studentt95)^2,0)
+data$LFStudent99<-ifelse(data$yield<data$studentt99,1+(data$yield-data$studentt99)^2,0)
+student95<-ggplot(data,aes(position,LFStudent95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+student99<-ggplot(data,aes(position,LFStudent99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(normal95,normal99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución t-student",gp=gpar(fontsize=20,col="red")))
+```
+
+
+###### FUNCION PERDIDA DISTRIBUCION ERROR GENERALIZADO
+```{r eval=FALSE}
+data$LFGed95<-ifelse(data$yield<data$Ged95,1+(data$yield-data$Ged95)^2,0)
+data$LFGed99<-ifelse(data$yield<data$Ged99,1+(data$yield-data$Ged99)^2,0)
+ged95<-ggplot(data,aes(position,LFGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+ged99<-ggplot(data,aes(position,LFGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(ged95,ged99,nrow=1,
+  top=grid.text("Gráfico función pérdida bajo distribución de Error Generalizada",
+      gp=gpar(fontsize=20,col="red")))
+```
+
+###### FUNCION PERDIDA DISTRIBUCION ERROR GENERALIZADO ASIMETRICO
+```{r eval=FALSE}
+data$LFsGed95<-ifelse(data$yield<data$sged95,1+(data$yield-data$sged95)^2,0)
+data$LFsGed99<-ifelse(data$yield<data$sged99,1+(data$yield-data$sged99)^2,0)
+sged95<-ggplot(data,aes(position,LFsGed95))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=5%)")
+sged99<-ggplot(data,aes(position,LFsGed99))+geom_line()+
+  scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
+  theme_bw(base_family="Times")+
+  theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
+  labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
+grid.arrange(sged95,sged99,nrow=1,
+  top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA ASIMETRICA",
+      gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+```
+
