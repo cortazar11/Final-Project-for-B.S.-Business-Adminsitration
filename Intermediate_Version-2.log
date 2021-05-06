@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.5.4)  4 MAY 2021 16:52
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.5.4)  6 MAY 2021 20:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -511,40 +511,40 @@ LaTeX Warning: Command \underline  has changed.
 ) (./Intermediate_Version-2.aux)
 \openout1 = `Intermediate_Version-2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 141.
-LaTeX Font Info:    ... okay on input line 141.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/lmr/m/n --> TU/lmr/m/n on input line 141.
+(Font)                  OT1/lmr/m/n --> TU/lmr/m/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/lmr/m/it --> TU/lmr/m/it on input line 141.
+(Font)                  OT1/lmr/m/it --> TU/lmr/m/it on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/lmr/bx/n --> TU/lmr/bx/n on input line 141.
+(Font)                  OT1/lmr/bx/n --> TU/lmr/bx/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/lmss/m/n --> TU/lmss/m/n on input line 141.
+(Font)                  OT1/lmss/m/n --> TU/lmss/m/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/lmss/bx/n --> TU/lmss/bx/n on input line 141.
+(Font)                  OT1/lmss/bx/n --> TU/lmss/bx/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/lmtt/m/n --> TU/lmtt/m/n on input line 141.
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/m/n on input line 142.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/lmtt/m/n --> TU/lmtt/bx/n on input line 141.
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/bx/n on input line 142.
 
 Package fontspec Info: latinmodern-math scale = 0.9999964596882403.
 
@@ -573,7 +573,7 @@ pt=math;language=dflt;"
 (fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
 
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(0)/m/n' will be
-(Font)              scaled to size 10.0pt on input line 141.
+(Font)              scaled to size 10.0pt on input line 142.
 
 Package fontspec Info: latinmodern-math scale = 0.9999964596882403.
 
@@ -612,18 +612,18 @@ pt=math;language=dflt;"
 (fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
 
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 10.0pt on input line 141.
+(Font)              scaled to size 10.0pt on input line 142.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 141.
+(Font)              `operators' in the math version `normal' on input line 142.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/lmr/m/n --> TU/latinmodern-math.otf(1)/m/n on input
- line 141.
+ line 142.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 141.
+(Font)              `operators' in the math version `bold' on input line 142.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
 (Font)                  OT1/lmr/bx/n --> TU/latinmodern-math.otf(1)/b/n on inpu
-t line 141.
+t line 142.
 
 Package fontspec Info: latinmodern-math scale = 0.9999964596882403.
 
@@ -710,15 +710,15 @@ t=math;language=dflt;"
 (fontspec)             \fontdimen 21\font =0pt\relax 
 
 LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
-(Font)              `symbols' in the math version `normal' on input line 141.
+(Font)              `symbols' in the math version `normal' on input line 142.
 LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
 (Font)                  OMS/lmsy/m/n --> TU/latinmodern-math.otf(2)/m/n on inpu
-t line 141.
+t line 142.
 LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
-(Font)              `symbols' in the math version `bold' on input line 141.
+(Font)              `symbols' in the math version `bold' on input line 142.
 LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
 (Font)                  OMS/lmsy/b/n --> TU/latinmodern-math.otf(2)/b/n on inpu
-t line 141.
+t line 142.
 
 Package fontspec Info: latinmodern-math scale = 0.9999964596882403.
 
@@ -788,17 +788,17 @@ pt=math;language=dflt;"
 
 LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
 (Font)              `largesymbols' in the math version `normal' on input line 1
-41.
+42.
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
 (Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/m/n on inpu
-t line 141.
+t line 142.
 LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
-(Font)              `largesymbols' in the math version `bold' on input line 141
+(Font)              `largesymbols' in the math version `bold' on input line 142
 .
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
 (Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/b/n on inpu
-t line 141.
-Package hyperref Info: Link coloring OFF on input line 141.
+t line 142.
+Package hyperref Info: Link coloring OFF on input line 142.
 (/home/miguel/.TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/home/miguel/.TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
@@ -809,9 +809,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count321
 )
-LaTeX Info: Redefining \ref on input line 141.
-LaTeX Info: Redefining \pageref on input line 141.
-LaTeX Info: Redefining \nameref on input line 141.
+LaTeX Info: Redefining \ref on input line 142.
+LaTeX Info: Redefining \pageref on input line 142.
+LaTeX Info: Redefining \nameref on input line 142.
 (./Intermediate_Version-2.out) (./Intermediate_Version-2.out)
 \@outlinefile=\write4
 \openout4 = `Intermediate_Version-2.out'.
@@ -851,119 +851,119 @@ LaTeX Info: Redefining \nameref on input line 141.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 12.0pt on input line 143.
+(Font)              scaled to size 12.0pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 143.
+(Font)              scaled to size 8.0pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 6.0pt on input line 143.
+(Font)              scaled to size 6.0pt on input line 144.
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-43.
+44.
 (/home/miguel/.TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 12.0011pt on input line 143.
+(Font)              scaled to size 12.0011pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 8.00073pt on input line 143.
+(Font)              scaled to size 8.00073pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 6.00055pt on input line 143.
+(Font)              scaled to size 6.00055pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 11.99872pt on input line 143.
+(Font)              scaled to size 11.99872pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 7.99915pt on input line 143.
+(Font)              scaled to size 7.99915pt on input line 144.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 5.99936pt on input line 143.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 143
+(Font)              scaled to size 5.99936pt on input line 144.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 144
 .
 (/home/miguel/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 143
+LaTeX Font Info:    Trying to load font information for U+msb on input line 144
 .
 (/home/miguel/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 150.
+(Font)              scaled to size 7.0pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 150.
+(Font)              scaled to size 5.0pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 10.00092pt on input line 150.
+(Font)              scaled to size 10.00092pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 7.00064pt on input line 150.
+(Font)              scaled to size 7.00064pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.00046pt on input line 150.
+(Font)              scaled to size 5.00046pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 9.99893pt on input line 150.
+(Font)              scaled to size 9.99893pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 6.99925pt on input line 150.
+(Font)              scaled to size 6.99925pt on input line 151.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 4.99947pt on input line 150.
+(Font)              scaled to size 4.99947pt on input line 151.
 
-Underfull \hbox (badness 10000) in paragraph at lines 152--171
+Underfull \hbox (badness 10000) in paragraph at lines 153--172
 
  []
 
 [1
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 217--225
+Underfull \hbox (badness 10000) in paragraph at lines 218--226
 
  []
 
 [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 409--416
+Underfull \hbox (badness 10000) in paragraph at lines 410--417
 
  []
 
 [4] [5]
 LaTeX Font Info:    Trying to load font information for TU+phv on input line 61
-6.
-LaTeX Font Info:    No file TUphv.fd. on input line 616.
+7.
+LaTeX Font Info:    No file TUphv.fd. on input line 617.
 
 LaTeX Font Warning: Font shape `TU/phv/m/n' undefined
-(Font)              using `TU/lmr/m/n' instead on input line 616.
+(Font)              using `TU/lmr/m/n' instead on input line 617.
 
 File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-2-1.pdf Graphic f
 ile (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-2-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 621--622
+Underfull \hbox (badness 10000) in paragraph at lines 622--623
 
  []
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 652--656
+Underfull \hbox (badness 10000) in paragraph at lines 653--657
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 657--658
+Underfull \hbox (badness 10000) in paragraph at lines 658--659
 
  []
 
 [7]
-Underfull \hbox (badness 10000) in paragraph at lines 709--713
+Underfull \hbox (badness 10000) in paragraph at lines 710--714
 
  []
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 838--839
+Underfull \hbox (badness 10000) in paragraph at lines 839--840
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 840--841
+Underfull \hbox (badness 10000) in paragraph at lines 841--842
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 846--847
+Underfull \hbox (badness 10000) in paragraph at lines 847--848
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 848--850
+Underfull \hbox (badness 10000) in paragraph at lines 849--851
 
  []
 
@@ -971,17 +971,17 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-4-1.pdf Graphic f
 ile (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-4-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 856--857
+Underfull \hbox (badness 10000) in paragraph at lines 857--858
 
  []
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 858--859
+Underfull \hbox (badness 10000) in paragraph at lines 859--860
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 878--886
+Underfull \hbox (badness 10000) in paragraph at lines 879--887
 
  []
 
@@ -989,56 +989,56 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-5-1.pdf Graphic f
 ile (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-5-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 887--889
+Underfull \hbox (badness 10000) in paragraph at lines 888--890
 
  []
 
 [10]
-Underfull \hbox (badness 10000) in paragraph at lines 898--911
+Underfull \hbox (badness 10000) in paragraph at lines 899--912
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 912--914
+Underfull \hbox (badness 10000) in paragraph at lines 913--915
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 915--916
+Underfull \hbox (badness 10000) in paragraph at lines 916--917
 
  []
 
 [11]
-Underfull \hbox (badness 10000) in paragraph at lines 936--937
+Underfull \hbox (badness 10000) in paragraph at lines 937--938
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 959--965
+Underfull \hbox (badness 10000) in paragraph at lines 960--966
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 966--967
+Underfull \hbox (badness 10000) in paragraph at lines 967--968
 
  []
 
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 1000--1003
+Underfull \hbox (badness 10000) in paragraph at lines 1001--1004
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1004--1005
+Underfull \hbox (badness 10000) in paragraph at lines 1005--1006
 
  []
 
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1008.
+(hyperref)                than one, level fixed on input line 1009.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1019--1020
+Underfull \hbox (badness 10000) in paragraph at lines 1020--1021
 
  []
 
@@ -1046,7 +1046,7 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-9-1.pdf Graphic f
 ile (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-9-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1037--1038
+Underfull \hbox (badness 10000) in paragraph at lines 1038--1039
 
  []
 
@@ -1054,12 +1054,12 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-11-1.pdf Graphic
 file (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-11-1.pdf>
 [13]
-Underfull \hbox (badness 10000) in paragraph at lines 1056--1057
+Underfull \hbox (badness 10000) in paragraph at lines 1057--1058
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1058--1059
+Underfull \hbox (badness 10000) in paragraph at lines 1059--1060
 
  []
 
@@ -1067,12 +1067,12 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-13-1.pdf Graphic
 file (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-13-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1076--1077
+Underfull \hbox (badness 10000) in paragraph at lines 1077--1078
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1078--1079
+Underfull \hbox (badness 10000) in paragraph at lines 1079--1080
 
  []
 
@@ -1080,126 +1080,131 @@ File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-15-1.pdf Graphic
 file (type pdf)
 <use Intermediate_Version-2_files/figure-latex/unnamed-chunk-15-1.pdf>
 [14]
-Underfull \hbox (badness 10000) in paragraph at lines 1099--1102
+Underfull \hbox (badness 10000) in paragraph at lines 1100--1103
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1103--1104
+Underfull \hbox (badness 10000) in paragraph at lines 1104--1105
 
  []
 
 [15]
-Underfull \hbox (badness 10000) in paragraph at lines 1154--1155
+Underfull \hbox (badness 10000) in paragraph at lines 1162--1163
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1164--1165
+Underfull \hbox (badness 10000) in paragraph at lines 1180--1181
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1187--1192
+Underfull \hbox (badness 10000) in paragraph at lines 1190--1191
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1193--1194
+Underfull \hbox (badness 10000) in paragraph at lines 1213--1218
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1219--1220
 
  []
 
 [16]
-Underfull \hbox (badness 10000) in paragraph at lines 1219--1225
+Underfull \hbox (badness 10000) in paragraph at lines 1245--1251
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1248--1249
+Underfull \hbox (badness 10000) in paragraph at lines 1274--1275
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1250--1254
+Underfull \hbox (badness 10000) in paragraph at lines 1276--1280
 
  []
 
 [17]
-Underfull \hbox (badness 10000) in paragraph at lines 1298--1300
+Underfull \hbox (badness 10000) in paragraph at lines 1324--1326
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1301--1302
+Underfull \hbox (badness 10000) in paragraph at lines 1327--1328
 
  []
 
-File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-18-1.pdf Graphic 
-file (type pdf)
-<use Intermediate_Version-2_files/figure-latex/unnamed-chunk-18-1.pdf>
+File: Intermediate_Version-2_files/figure-latex/chunk1-1.pdf Graphic file (type
+ pdf)
+<use Intermediate_Version-2_files/figure-latex/chunk1-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1303--1304
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1305--1306
-
- []
-
-File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-19-1.pdf Graphic 
-file (type pdf)
-<use Intermediate_Version-2_files/figure-latex/unnamed-chunk-19-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1307--1308
+Underfull \hbox (badness 10000) in paragraph at lines 1329--1330
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1309--1310
+Underfull \hbox (badness 10000) in paragraph at lines 1331--1332
 
  []
 
-File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-20-1.pdf Graphic 
-file (type pdf)
-<use Intermediate_Version-2_files/figure-latex/unnamed-chunk-20-1.pdf>
+File: Intermediate_Version-2_files/figure-latex/chunk2-1.pdf Graphic file (type
+ pdf)
+<use Intermediate_Version-2_files/figure-latex/chunk2-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1311--1312
+Underfull \hbox (badness 10000) in paragraph at lines 1333--1334
 
  []
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 1313--1314
+Underfull \hbox (badness 10000) in paragraph at lines 1335--1336
 
  []
 
-File: Intermediate_Version-2_files/figure-latex/unnamed-chunk-21-1.pdf Graphic 
-file (type pdf)
-<use Intermediate_Version-2_files/figure-latex/unnamed-chunk-21-1.pdf>
+File: Intermediate_Version-2_files/figure-latex/chunk3-1.pdf Graphic file (type
+ pdf)
+<use Intermediate_Version-2_files/figure-latex/chunk3-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1315--1316
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1317--1318
+Underfull \hbox (badness 10000) in paragraph at lines 1337--1338
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1344--1345
+Underfull \hbox (badness 10000) in paragraph at lines 1339--1340
+
+ []
+
+File: Intermediate_Version-2_files/figure-latex/chunk4-1.pdf Graphic file (type
+ pdf)
+<use Intermediate_Version-2_files/figure-latex/chunk4-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1341--1342
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1346--1347
+Underfull \hbox (badness 10000) in paragraph at lines 1343--1344
 
  []
 
 [19]
+Underfull \hbox (badness 10000) in paragraph at lines 1369--1370
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1372
+
+ []
+
+[20]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 1406.
-[20] [21] [22] [23] [24] [25] (./Intermediate_Version-2.aux)
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 1431.
+[21] [22] [23] [24] [25] [26] (./Intermediate_Version-2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -1208,12 +1213,12 @@ Package rerunfilecheck Info: File `Intermediate_Version-2.out' has not changed.
 (rerunfilecheck)             Checksum: E5E3EBA2C9F9E80D3A81D746E07F2AC2;1867.
  ) 
 Here is how much of TeX's memory you used:
- 17856 strings out of 478918
- 314140 string characters out of 5866572
- 790626 words of memory out of 5000000
- 37422 multiletter control sequences out of 15000+600000
+ 17857 strings out of 478918
+ 313917 string characters out of 5866572
+ 790486 words of memory out of 5000000
+ 37423 multiletter control sequences out of 15000+600000
  409995 words of font info for 82 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  98i,10n,122p,523b,435s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on Intermediate_Version-2.pdf (25 pages).
+Output written on Intermediate_Version-2.pdf (26 pages).

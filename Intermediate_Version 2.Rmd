@@ -23,14 +23,17 @@ header-includes:
 #- \usepackage[T1]{fontenc}
 #- \usepackage[utf8]{inputenc}
 - \usepackage{sectsty}
+- \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 
 
 always_allow_html: true
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 
 ```{r echo=FALSE, message=FALSE}
 library(fGarch)
@@ -705,11 +708,16 @@ Los resultados de las excepciones y de los porcentajes para las diferentes distr
 
 ## *BACKTESTING DISTRIBUCIONES*
 
-
-```{r echo=FALSE}
-df<-as.data.frame(matrix(0,nrow=4, ncol=4))
+```{r ,echo=FALSE}
+df<-as.data.frame(matrix(0,nrow=4,ncol=4))
+newTest5<-c('0 < 1.65','NO COMPARACION','95.9719 > 2.27','NO COMPARACION')
+newTest1<-c('0.05501 < 2.33','11.6147 > 2.65','NINGUNA EXCEPCION','14.4971 > 2.72')
+kupiec5<-c('0','∞','95.9719','∞')
+kupiec1<-c('0.05501','11.6147','-','14.4971')
+perdida95<- c(perdidaNormal95,perdidaStudent95,perdidaGed95,perdidaSGed95)
+perdida99<- c(perdidaNormal99, perdidaStudent99,perdidaGed99, perdidaSGed99)
 for (i in 1:4){
-  df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
+    df[1,1]<- round(sum(data$yield<data$VaR95,na.rm=TRUE),digits=0)
   df[2,1]<- round(df[1,1]/dim(data)[1],digits=4)
   df[3,1]<- round(sum(data$yield<data$VaR99,na.rm=TRUE),digits=0)
   df[4,1]<- round(df[3,1]/dim(data)[1],digits=4)
@@ -727,19 +735,43 @@ for (i in 1:4){
   df[4,4]<-round(df[3,4]/dim(data)[1],digits=4)
 }
 
+df<-rbind(df[1:2,],kupiec5,df[-(1:2),])
+df<-rbind(df[1:3,],newTest5,df[-(1:3),])
+df<-rbind(df[1:4,],perdida95,df[-(1:4),])
+df<-rbind(df[1:7,],kupiec1,df[-(1:7),])
+df<-rbind(df[1:8,],newTest1,df[-(1:8),])
+df<-rbind(df[1:9,],perdida99,df[-(1:9),])
+
 
 colnames(df)<- c("normal","t-student","error generalizada", "error generalizada asimétrica")
-rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3-Número excepciones","4-Porcentaje excepciones")
+if (nrow(df)==10){
+  rownames(df)<-c("1-Número excepciones","2-Porcentaje excepciones","3.-Valor Kupiec","4.-Resultado Test","5.-Media Funcion Pérdida","6-Número excepciones","7-Porcentaje excepciones","8.-Valor Kupiec","9-Resultado Test","10.-Media Funcion Pérdida")
+}
+
+
 
 df%>%
-  kbl(booktabs=T) %>%
+  kbl(escape=F,booktabs=T) %>%
   kable_styling(latex_options="scale_down",position="left")%>%
   row_spec(0, monospace=TRUE,align="r") %>%
+  row_spec(1:10,align="r") %>%
+  #column_spec(2,background="applegreen") %>%
   column_spec(1, width = "12em")%>%
   column_spec(2:5, width = "7em")%>%
-  pack_rows("Coeficiente Riesgo 5%", 1, 2) %>%
-  pack_rows("Coeficiente Riesgo 1%", 3, 4)
+  pack_rows("Coeficiente Riesgo 5%", 1, 5, indent=F) %>%
+  pack_rows("Coeficiente Riesgo 1%", 6, 10, indent=F)
+
 ```
+\
+
+\
+Como vemos las únicas estimaciones VaR en que los valores del test de Kupiec son menores que los valores críticos (o sea,los percentiles calculados en la sección de resultados empíricos) y que por tanto pasan los test de hipótesis, son las correspondiente a la distribución normal. 
+
+En términos de las funciones de pérdida vemos que para un coeficiente de riesgo del 5%, la distribución de error generalizada provee las menores pérdidas y la t-student las mayores. Para un coeficiente de riesgo del 1% la función de error generalizada asimétrica provee las pérdidas menores y la normal las mayores.
+
+Asi pues las distribuciones de error generalizado aportarían mejor modelo si pasaran los tests. La única distribución que pasa los tests, la normal, no aporta el mejor modelo en términos de función de pérdida.
+
+A continuacion pasamos a analizar cada uno de los tests.
 \
 
 \
@@ -851,9 +883,11 @@ $LF = 1+(r_{t}-VaR( α ))^{2}$ si  $r_{t}<VaR( α )$ ; $0$ si $r_{t}>VaR( α )$
 
 \
 
-```{r fig.width=13, echo=FALSE}
+```{r ,chunk1, fig.width=13, echo=FALSE, cache=TRUE}
 data$LFNormal95<-ifelse(data$yield<data$VaR95,1+(data$yield-data$VaR95)^2,0)
 data$LFNormal99<-ifelse(data$yield<data$VaR99,1+(data$yield-data$VaR99)^2,0)
+perdidaNormal95<-round(mean(data$LFNormal95),digits = 5)
+perdidaNormal99<-round(mean(data$LFNormal99),digits = 5)
 normal95<-ggplot(data,aes(position,LFNormal95))+geom_line()+
   scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
   theme_bw(base_family="Times")+
@@ -866,6 +900,7 @@ normal99<-ggplot(data,aes(position,LFNormal99))+geom_line()+
   labs(x="Año",y="Funcion Pérdida",title="Grafico Funcion Pérdida (Coeficiente Riesgo=1%)")
 grid.arrange(normal95,normal99,nrow=1,
   top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION NORMAL",gp=gpar(fontsize=20,col="brown"),vjust=0.30))
+
 ```
 \
 
@@ -873,9 +908,11 @@ grid.arrange(normal95,normal99,nrow=1,
 
 
 
-```{r fig.width=13,echo=FALSE}
+```{r chunk2, fig.width=13,echo=FALSE,  cache=TRUE}
 data$LFStudent95<-ifelse(data$yield<data$studentt95,1+(data$yield-data$studentt95)^2,0)
 data$LFStudent99<-ifelse(data$yield<data$studentt99,1+(data$yield-data$studentt99)^2,0)
+perdidaStudent95<-round(mean(data$LFStudent95),digits = 5)
+perdidaStudent99<-round(mean(data$LFStudent99),digits = 5)
 student95<-ggplot(data,aes(position,LFStudent95))+geom_line()+
   scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+theme_bw(base_family="Times")+
   theme(axis.text.x = element_text(angle=90),plot.title=element_text(color="red",size=14,hjust=0.5))+
@@ -892,9 +929,11 @@ grid.arrange(normal95,normal99,nrow=1,
 
 \
 
-```{r fig.width=13,echo=FALSE}
+```{r chunk3, fig.width=13,echo=FALSE,  cache=TRUE}
 data$LFGed95<-ifelse(data$yield<data$Ged95,1+(data$yield-data$Ged95)^2,0)
 data$LFGed99<-ifelse(data$yield<data$Ged99,1+(data$yield-data$Ged99)^2,0)
+perdidaGed95<-round(mean(data$LFGed95),digits = 5)
+perdidaGed99<-round(mean(data$LFGed99),digits = 5)
 ged95<-ggplot(data,aes(position,LFGed95))+geom_line()+
   scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
   theme_bw(base_family="Times")+
@@ -913,9 +952,11 @@ grid.arrange(ged95,ged99,nrow=1,
 
 \
 
-```{r fig.width=13,echo=FALSE}
+```{r chunk4,fig.width=13,echo=FALSE,  cache=TRUE}
 data$LFsGed95<-ifelse(data$yield<data$sged95,1+(data$yield-data$sged95)^2,0)
 data$LFsGed99<-ifelse(data$yield<data$sged99,1+(data$yield-data$sged99)^2,0)
+perdidaSGed95<-round(mean(data$LFsGed95),digits = 5)
+perdidaSGed99<-round(mean(data$LFsGed99),digits = 5)
 sged95<-ggplot(data,aes(position,LFsGed95))+geom_line()+
   scale_x_continuous(breaks=seq(1,4948,by=253),labels=seq(2000,2019))+
   theme_bw(base_family="Times")+
@@ -939,12 +980,11 @@ grid.arrange(sged95,sged99,nrow=1,
 \section*{CONCLUSION}
 \end{centering}
 
-De los resultados  presentados en este trabajo podemos concluir que la distribución normal supera la distribución t-student, la de error generalizado y la de error generalizado asimétrico, en ajustarse a los retornos financieros y en predecir el VaR del Ibex35 en el periodo comprendido entre 2000 y 2019. En términos
-de su habilidad para predecir el VaR, la distribución normal provee la estimación mas precisa. En términos estadísticos, esta distribución se ajusta a los datos mejor que las otras.
+De los resultados  presentados en este trabajo podemos concluir que la distribución normal supera la distribución t-student, la de error generalizado y la de error generalizado asimétrico, en ajustarse a los retornos financieros y en predecir el VaR del Ibex35 en el periodo comprendido entre 2000 y 2019, ya que es la única que pasa el test de hipótesis. Sin embargo esta superioridad no es muy clara, ya que en cuanto a los modelos de la función de pérdida ganan las de error generalizado y error generalizado asimétrica para coeficientes de riesgo del 5% y 1% respectivamente. La distribución perdedora claramente es la t-student, que no pasa los tests de hipótesis y sus fuciones de pérdida dan valores elevados.
 
-En relación a la precisión de las estimaciones VaR, la distribución normal supera a las demas ya que las pruebas realizadas sobre las estimaciones de las diferentes distribuciones a traves del test de Kupiec, da a las distribución normal (tanto para los coeficientes de riesgo del 5% y 1%) como las únicas precisas.
+Asi pues hallamos evidencia en favor de la distribución normal particularmente en relación con la t-student. Sin embargo podemos mantener la atención en las distribuciones de error generalizado y error generalizado asimétrico, ya que sus modelos de función de peŕdida son mejores.
 
-En resumen, la distribución normal es el modelo que mejor se ajusta a los rendimientos y a la estimación VaR del Ibex35 desde el año 2000 hasta el año 2019.
+
 
 \
 
@@ -1281,4 +1321,10 @@ grid.arrange(sged95,sged99,nrow=1,
   top=grid::textGrob("GRAFICO FUNCION PERDIDA BAJO DISTRIBUCION ERROR GENERALIZADA ASIMETRICA",
       gp=gpar(fontsize=20,col="brown"),vjust=0.30))
 ```
+
+```{r}
+save.image(file="/home/miguel/UNED_2021/Proyecto/R Language/.RData")
+```
+
+
 
